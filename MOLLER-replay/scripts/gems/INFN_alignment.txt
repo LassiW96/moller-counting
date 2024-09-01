@@ -1,0 +1,36 @@
+/lustre19/expphy/volatile/halla/moller12gev/chandan/Rootfiles/moller_uvagem_replayed_916_seg0_1.root
+endlist
+prefix sbs.uvagem
+nlayers 5
+nmodules 5
+mod_layer 0 1 2 3 4 
+fixmod 1   0   0 0 0  
+refmod -1
+
+mod_x0                0       0.00  0.0 0 0
+mod_y0                0       0.0    0.0 0 0
+mod_z0                0       0.41    0.78 1.1 0.94
+mod_ax                0       0.0    0.0 0
+mod_ay                0       0.0    0.0 0 
+mod_az                0       0.0    0.0 0
+#mod_x0                0       0.0120457     0.004599638
+#mod_y0                0   -0.0002655333   -0.0003558867
+#mod_z0                0       0.4112692       0.7884612
+#mod_ax                0      0.00399924      0.02851639
+#mod_ay                0      -0.1125005      -0.3759295
+#mod_az                0    -0.008747409     -0.02890859
+
+# strip orientation angles:
+mod_uangle 0.0 0 0 166.75 166.75
+mod_vangle 90.0 90.0 90.0 -166.75 -166.75
+niter 1000000
+minchi2change 1.e-4
+minposchange 1.e-6
+minanglechange 1.e-5
+offsetsonly 0
+sigma 0.15e-3
+NMAX 10000000
+endconfig
+sbs.uvagem.track.ntrack==1&&sbs.uvagem.track.nhits>=3
+#sbs.uvagem.track.chi2ndf<40&&sbs.uvagem.track.ntrack==1&&sbs.uvagem.track.nhits>=4
+endcut

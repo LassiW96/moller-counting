@@ -1,0 +1,52 @@
+==== Sat Aug 31 22:04:35 2024 Started analysis, run 1313
+Reading from "file:///lustre24/expphy/volatile/halla/moller12gev/chandan/datafile/ssp_gem_apv_test_1313.evio.0"
+End of file.
+==== Sat Aug 31 22:09:05 2024 Summary for run 1313
+Counter summary:
+23216  events read
+23216  events decoded
+23214  physics events
+    2  other event types
+23214  physics events analyzed
+23216  events accepted
+
+Timing summary:
+Init             : Real Time =   2.16 seconds Cpu Time =   0.49 seconds
+Begin            : Real Time =   0.05 seconds Cpu Time =   0.04 seconds
+RawDecode        : Real Time =  10.60 seconds Cpu Time =  10.69 seconds
+Decode           : Real Time = 240.37 seconds Cpu Time = 238.94 seconds
+CoarseTracking   : Real Time =   1.59 seconds Cpu Time =   1.46 seconds
+CoarseReconstruct: Real Time =   0.02 seconds Cpu Time =   0.03 seconds
+Tracking         : Real Time =   0.02 seconds Cpu Time =   0.03 seconds
+Reconstruct      : Real Time =   0.02 seconds Cpu Time =   0.02 seconds
+Physics          : Real Time =   0.02 seconds Cpu Time =   0.01 seconds
+End              : Real Time =   0.44 seconds Cpu Time =   0.42 seconds
+Output           : Real Time =  16.19 seconds Cpu Time =   8.32 seconds
+Cuts             : Real Time =   0.14 seconds Cpu Time =   0.15 seconds
+Total            : Real Time = 271.98 seconds Cpu Time = 260.93 seconds
+ Continuing analysis, run 1313
+Reading from "file:///lustre24/expphy/volatile/halla/moller12gev/chandan/datafile/ssp_gem_apv_test_1313.evio.1"
+End of file.
+==== Sat Aug 31 22:34:54 2024 Summary for run 1313
+Counter summary:
+46430  events read
+46430  events decoded
+46428  physics events
+    2  other event types
+46428  physics events analyzed
+46430  events accepted
+
+Timing summary:
+Init             : Real Time =   2.51 seconds Cpu Time =   0.56 seconds
+Begin            : Real Time =   0.05 seconds Cpu Time =   0.04 seconds
+RawDecode        : Real Time =  21.05 seconds Cpu Time =  21.06 seconds
+Decode           : Real Time = 483.13 seconds Cpu Time = 480.31 seconds
+CoarseTracking   : Real Time =   3.23 seconds Cpu Time =   2.99 seconds
+CoarseReconstruct: Real Time =   0.04 seconds Cpu Time =   0.04 seconds
+Tracking         : Real Time =   0.04 seconds Cpu Time =   0.05 seconds
+Reconstruct      : Real Time =   0.04 seconds Cpu Time =   0.03 seconds
+Physics          : Real Time =   0.03 seconds Cpu Time =   0.03 seconds
+End              : Real Time = 969.21 seconds Cpu Time =   0.98 seconds
+Output           : Real Time = 340.75 seconds Cpu Time =  17.33 seconds
+Cuts             : Real Time =   0.29 seconds Cpu Time =   0.31 seconds
+Total            : Real Time = 1821.12 seconds Cpu Time = 524.48 seconds
