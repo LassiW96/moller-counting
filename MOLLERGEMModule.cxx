@@ -290,7 +290,7 @@ Int_t MOLLERGEMModule::ReadDatabase( const TDatime& date ){
 
   int eventinfoplots_flag = fMakeEventInfoPlots ? 1 : 0;
 
-  int usestriptimingcuts = fUseStripTimingCuts;
+  //int usestriptimingcuts = fUseStripTimingCuts;
   int useTSchi2cut = fUseTSchi2cut ? 1 : 0;
   int suppressfirstlast = fSuppressFirstLast;
   int usecommonmoderollingaverage = fMeasureCommonMode ? 1 : 0;
@@ -1602,7 +1602,7 @@ Int_t   MOLLERGEMModule::Decode( const THaEvData& evdata ){
 	for( unsigned int ihit=0; ihit<nhits_MPD_debug; ihit++ ){
 	  UInt_t chan_temp = evdata.GetRawData( it->crate, it->slot, fChan_MPD_Debug, ihit );
 	  UInt_t word_temp = evdata.GetData( it->crate, it->slot, fChan_MPD_Debug, ihit );
-	  if( chan_temp == effChan && wcount < 3 ){
+	  if( chan_temp == (int) (effChan && wcount < 3) ){
 	    MPDdebugwords[wcount++] = word_temp;
 	  }
 	  if( wcount == 3 ) break; //if we found all 3 MPD debug words for this channel, exit the loop
@@ -3092,10 +3092,10 @@ void MOLLERGEMModule::find_clusters_1D_experimental( MOLLERGEM::GEMaxis_t axis, 
       fullcluster.hitindex.resize( fullcluster.nstrips, 0.0 );
 
       //initialize hitindex for fullcluster:
-      for( int istrip=0; istrip<fullcluster.nstrips; istrip++ ){
+      for( int istrip=0; istrip<(int)(fullcluster.nstrips); istrip++ ){
 	fullcluster.hitindex[istrip] = hitindex[fullcluster.istriplo+istrip];
 
-	int stripidx_full = fullcluster.istriplo + istrip;
+	UInt_t stripidx_full = fullcluster.istriplo + istrip;
       
 	//loop over time samples:
 	for( int isamp=0; isamp<fN_MPD_TIME_SAMP; isamp++ ){
@@ -4946,7 +4946,7 @@ Int_t MOLLERGEMModule::GetStripNumber( UInt_t rawstrip, UInt_t pos, UInt_t inver
   else{
   int count =0;
   for(auto &skip_ch:g_skip_channel){
-	if(RstripNb>APVMAP[fAPVmapping][skip_ch])
+	if(RstripNb>(Int_t)(APVMAP[fAPVmapping][skip_ch]))
 		count++;
 	}
   RstripNb -=count;
@@ -5111,13 +5111,13 @@ double MOLLERGEMModule::GetCommonMode( UInt_t isamp, Int_t flag, const mpdmap_t 
 
     
 
-    if( nhits < fCommonModeNstripRejectLow + fCommonModeNstripRejectHigh + fCommonModeMinStripsInRange ){
+    if( nhits <(UInt_t)( fCommonModeNstripRejectLow + fCommonModeNstripRejectHigh + fCommonModeMinStripsInRange )){
       Error(Here("MOLLERGEMModule::GetCommonMode()"), "Sorting-method common-mode calculation requested with nhits %d less than minimum %d required", nhits, fCommonModeNstripRejectLow + fCommonModeNstripRejectHigh + fCommonModeMinStripsInRange );
 
       exit(-1);
     }
     
-    for( int ihit=0; ihit<nhits; ihit++ ){
+    for( int ihit=0; ihit<(int)(nhits); ihit++ ){
       if(fAPVmapping == MOLLERGEM::kUVA_MOLLER && ihit<7) continue;
       int iraw = isamp + fN_MPD_TIME_SAMP * ihit;
 
@@ -5130,7 +5130,7 @@ double MOLLERGEMModule::GetCommonMode( UInt_t isamp, Int_t flag, const mpdmap_t 
     double cm_temp = 0.0;
     int stripcount=0;
 
-    for( int k=fCommonModeNstripRejectLow; k<nhits-fCommonModeNstripRejectHigh; k++ ){
+    for( int k=fCommonModeNstripRejectLow; k<(int)(nhits)-fCommonModeNstripRejectHigh; k++ ){
       cm_temp += sortedADCs[k];
       stripcount++;
     }
@@ -5183,7 +5183,7 @@ double MOLLERGEMModule::GetCommonMode( UInt_t isamp, Int_t flag, const mpdmap_t 
     int maxcounts=0;
     //Now loop on all the strips and fill the histogram: 
     //for( int ihit=0; ihit<fN_APV25_CHAN; ihit++ ){
-    for( int ihit=0; ihit<nhits; ihit++ ){
+    for( int ihit=0; ihit<(int)(nhits); ihit++ ){
       if(fAPVmapping == MOLLERGEM::kUVA_MOLLER && ihit<7) continue;
       double ADC = fPedSubADC_APV[ isamp + fN_MPD_TIME_SAMP * ihit ];
       //calculate the lowest bin containing this ADC value. 
@@ -5239,7 +5239,7 @@ double MOLLERGEMModule::GetCommonMode( UInt_t isamp, Int_t flag, const mpdmap_t 
     double CM_2 = 0;
     int n_keep = 0;
     
-    for( int ihit=0; ihit<nhits; ihit++ ){
+    for( int ihit=0; ihit<(int)(nhits); ihit++ ){
       if(fAPVmapping == MOLLERGEM::kUVA_MOLLER && ihit<7) continue;
       int iraw=isamp + fN_MPD_TIME_SAMP * ihit;
       
@@ -5255,7 +5255,7 @@ double MOLLERGEMModule::GetCommonMode( UInt_t isamp, Int_t flag, const mpdmap_t 
     n_keep = 0;
     
     
-    for( int ihit=0; ihit<nhits; ihit++ ){
+    for( int ihit=0; ihit<(int)(nhits); ihit++ ){
       if(fAPVmapping == MOLLERGEM::kUVA_MOLLER && ihit<7) continue;
       int iraw=isamp + fN_MPD_TIME_SAMP * ihit;
       
@@ -5290,7 +5290,7 @@ double MOLLERGEMModule::GetCommonMode( UInt_t isamp, Int_t flag, const mpdmap_t 
       int n_keep = 0;
 
       
-      for( int ihit=0; ihit<nhits; ihit++ ){
+      for( int ihit=0; ihit<(int)(nhits); ihit++ ){
       if(fAPVmapping == MOLLERGEM::kUVA_MOLLER && ihit<7) continue;
 	int iraw=isamp + fN_MPD_TIME_SAMP * ihit;
 	
@@ -5339,7 +5339,7 @@ double MOLLERGEMModule::GetCommonMode( UInt_t isamp, Int_t flag, const mpdmap_t 
       double sumADCinrange=0.0;
       //double sum2ADCinrange=0.0;
       //for( int ihit=0; ihit<fN_APV25_CHAN; ihit++ ){
-      for( int ihit=0; ihit<nhits; ihit++ ){
+      for( int ihit=0; ihit<(int)(nhits); ihit++ ){
         if(fAPVmapping == MOLLERGEM::kUVA_MOLLER && ihit<7) continue;
 	int iraw=isamp + fN_MPD_TIME_SAMP * ihit;
 	
@@ -5695,7 +5695,7 @@ double MOLLERGEMModule::GetCommonModeCorrection( UInt_t isamp, const mpdmap_t &a
 
   //Note: it is ASSUMED that we already know the "online" common-mode before we call this routine:
 
-  if( isamp < 0 || isamp >= fN_MPD_TIME_SAMP ) return 0.0;
+  if( (int)(isamp) < 0 || isamp >= fN_MPD_TIME_SAMP ) return 0.0;
   if( nhits < fCorrectCommonModeMinStrips ) return 0.0;
   
   int ngood=0;
@@ -5727,7 +5727,7 @@ double MOLLERGEMModule::GetCommonModeCorrection( UInt_t isamp, const mpdmap_t &a
   //a relevant question here is whether we should put an UPPER limit on the ADC value to attempt a correction?
   //It seems the CM calculations below will take care of imposing any relevant upper limits.
   
-  for( int ihit=0; ihit<nhits; ihit++ ){
+  for( int ihit=0; ihit<(int)(nhits); ihit++ ){
     if(fAPVmapping == MOLLERGEM::kUVA_MOLLER && ihit<7) continue;
     int iraw=isamp + fN_MPD_TIME_SAMP*ihit;
     
@@ -5778,7 +5778,7 @@ double MOLLERGEMModule::GetCommonModeCorrection( UInt_t isamp, const mpdmap_t &a
     //Attempt to calculate a correction:
     if( fCommonModeFlag == 0 ){
       //sorting: this method will be significantly biased if we use the same "low strip" rejection as for full-readout events
-      if( ngoodhits >= fCommonModeNstripRejectLow + fCommonModeNstripRejectHigh + fCommonModeMinStripsInRange ){
+      if( (int)(ngoodhits) >= fCommonModeNstripRejectLow + fCommonModeNstripRejectHigh + fCommonModeMinStripsInRange ){
 	std::vector<double> sortedADCs(ngood);
 	for( int ihit=0; ihit<ngood; ihit++ ){
 	  int iraw = isamp + fN_MPD_TIME_SAMP * goodhits[ihit];
@@ -5792,7 +5792,7 @@ double MOLLERGEMModule::GetCommonModeCorrection( UInt_t isamp, const mpdmap_t &a
 	
 	std::sort( sortedADCs.begin(), sortedADCs.end() );
 	
-	for( int k=fCommonModeNstripRejectLow; k<ngoodhits-fCommonModeNstripRejectHigh; k++ ){
+	for( int k=fCommonModeNstripRejectLow; k<(int)(ngoodhits)-fCommonModeNstripRejectHigh; k++ ){
 	  cm_temp += sortedADCs[k];
 	  stripcount++;
 	}

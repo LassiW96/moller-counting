@@ -349,7 +349,7 @@ void MOLLERGEMTrackerBase::CompleteInitialization(){
       fModules[imod]->SetMakeCommonModePlots( fCommonModePlotsFlag );
     }
 
-    for(int iAPV = 0; iAPV < fModules[imod]->fNAPVs_U; iAPV++)
+    for(UInt_t iAPV = 0; iAPV < fModules[imod]->fNAPVs_U; iAPV++)
       if(fModules[imod]->fCommonModeMeanU[iAPV] > 1.0) cm_already_loaded = true;
       
 
@@ -415,7 +415,7 @@ void MOLLERGEMTrackerBase::CompleteInitialization(){
 
   // Now initialize the min high quality hits and track chi2 cuts if 
   // the initialization from the database is not sensible:
-  if(  fMinHighQualityHitsOnTrack.size() != fNlayers-fMinHitsOnTrack+1 ){
+  if(  (int)(fMinHighQualityHitsOnTrack.size()) != fNlayers-fMinHitsOnTrack+1 ){
     if( fMinHighQualityHitsOnTrack.size() >= 1 ){
       int minhitstemp = std::max(0,std::min(fNlayers, fMinHighQualityHitsOnTrack[0]));
       fMinHighQualityHitsOnTrack.clear();
@@ -425,7 +425,7 @@ void MOLLERGEMTrackerBase::CompleteInitialization(){
     }
   }
 
-  if( fTrackChi2Cut.size() != fNlayers-fMinHitsOnTrack+1 ){
+  if( (int)(fTrackChi2Cut.size()) != fNlayers-fMinHitsOnTrack+1 ){
     if( fTrackChi2Cut.size() >= 1 ){
       double cuttemp = fTrackChi2Cut[0];
       fTrackChi2Cut.clear(); //re-initialize all entries with cuttemp:
@@ -435,7 +435,7 @@ void MOLLERGEMTrackerBase::CompleteInitialization(){
     }
   }
   
-  if( fTrackChi2CutHitQuality.size() != fNlayers-fMinHitsOnTrack+1 ){
+  if( (int)(fTrackChi2CutHitQuality.size()) != fNlayers-fMinHitsOnTrack+1 ){
     if( fTrackChi2CutHitQuality.size() >= 1 ){
       double cuttemp = fTrackChi2CutHitQuality[0];
       fTrackChi2CutHitQuality.clear(); //re-initialize all entries with cuttemp:
@@ -569,7 +569,7 @@ void MOLLERGEMTrackerBase::LoadPedestals( const char *fname ){
   }
 
   //Now loop over the modules
-  for( int module=0; module<fNmodules; module++ ){
+  for( auto module=0; module<fNmodules; module++ ){
     for ( auto it = fModules[module]->fMPDmap.begin(); it != fModules[module]->fMPDmap.end(); ++it ){
 
       int this_crate = it->crate;
@@ -2669,12 +2669,12 @@ void MOLLERGEMTrackerBase::fill_good_hit_arrays() {
 		pos_save = false;
 
 		//Now to 2D loop
-		for( int iuclust=0; iuclust < fModules[module]->fNclustU; iuclust++){
+		for( int iuclust=0; iuclust < (int)(fModules[module]->fNclustU); iuclust++){
 		  
 		  mollergemcluster_t *uclust = &(fModules[module]->fUclusters[iuclust]);
 		 		    
 		  
-		  for( int ivclust=0; ivclust < fModules[module]->fNclustV; ivclust++){
+		  for( int ivclust=0; ivclust <(int)(fModules[module]->fNclustV); ivclust++){
 		    
 		    mollergemcluster_t *vclust = &(fModules[module]->fVclusters[ivclust]);
 
@@ -3222,7 +3222,7 @@ void MOLLERGEMTrackerBase::PrintNegEvents( const char *fname ){
 
   std::ofstream outfile( fname );
   
-  for(int idata = 0; idata < neg_event.size(); idata++)
+  for(int idata = 0; idata < (int)(neg_event.size()); idata++)
     outfile << neg_event[idata] <<" "<< neg_MPD[idata] <<" "<< neg_APV[idata] <<" "<< neg_strip[idata] <<" "<< is_neg[idata]<<endl;
   
   outfile.close();
