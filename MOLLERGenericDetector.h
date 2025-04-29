@@ -11,7 +11,6 @@
 //  - Can be single valued OR
 //  - Can contain pulse information such as integral, amplitude and time
 //  - Can be using Waveform data
-// - TDC
 //  - Can be single valued (leading edge) OR:
 //  - Can contain both leading and trailing edge and Time-Over-Threshold
 //
@@ -36,29 +35,12 @@ namespace MOLLERModeADC {
   };
 }
 
-namespace MOLLERModeTDC {
-  enum Mode{
-    kNone,
-    kIgnore,        //< Useful to preserve DB but ignore ADCs otherwise
-    kTDC,       //< Includes Trailing edge (and ToT)
-    kTDCSimple,  //< Does not contain trailing edge, and hence no ToT info
-  };
-}
-// structure for sorting TDC hits
-struct TDCHits {
-  UInt_t edge;
-  UInt_t rawtime;
-};
 
 // This structure has output data when the user wants every hit to be stored
 // in the rootfile.
 struct MOLLERGenericOutputData {
   // Note [] means it can be variable sized data per event/module
   // Module info
-  std::vector<Int_t> TDCrow;       //< [] row
-  std::vector<Int_t> TDCcol;         //< [] col
-  std::vector<Int_t> TDClayer;       //< [] layer
-  std::vector<Int_t> TDCelemID;      //< [] element ID
   std::vector<Int_t> ADCrow;         //< [] row
   std::vector<Int_t> ADCcol;         //< [] col
   std::vector<Int_t> ADClayer;       //< [] layer
@@ -75,11 +57,6 @@ struct MOLLERGenericOutputData {
   std::vector<Double_t> a_amptrig_p;     //< [] ADC pulse amplitude -pedestal
   std::vector<Double_t> a_amptrig_c;     //< [] ADC pulse amplitude -pedestal
   std::vector<Double_t> a_time;    //< [] ADC pulse time
-  // TDC variables
-  std::vector<Int_t> t_mult;         //< [] TDC # of hits per channel
-  std::vector<Double_t> t;         //< [] TDC (leading edge) time
-  std::vector<Double_t> t_te;      //< [] TDC trailing edge time
-  std::vector<Double_t> t_ToT;     //< [] TDC Time-Over-Threshold
   // Waveform variables
   std::vector<Int_t> samps_elemID;      //< [] Element ID of samples
   std::vector<Int_t> nsamps;      //< [] Number of ADC samples
@@ -88,10 +65,6 @@ struct MOLLERGenericOutputData {
 
   // Quick clear class
   void clear() {
-    TDCrow.clear();
-    TDCcol.clear();
-    TDCelemID.clear();
-    TDClayer.clear();
     ADCrow.clear();
     ADCcol.clear();
     ADCelemID.clear();
@@ -107,10 +80,6 @@ struct MOLLERGenericOutputData {
     a_amptrig_p.clear();
     a_amptrig_c.clear();
     a_time.clear();
-    t.clear();
-    t_mult.clear();
-    t_te.clear();
-    t_ToT.clear();
     nsamps.clear();
     sidx.clear();
     samps.clear();
@@ -129,13 +98,10 @@ public:
   virtual void Clear( Option_t* opt="" );
 
   void SetModeADC(MOLLERModeADC::Mode mode);
-  void SetModeTDC(MOLLERModeTDC::Mode mode) { fModeTDC = mode; }
   void SetDisableRefADC(Bool_t b) { fDisableRefADC = b; }
-  void SetDisableRefTDC(Bool_t b) { fDisableRefTDC = b; }
   void SetStoreRawHits(Bool_t var) { fStoreRawHits = var; }
   void SetStoreEmptyElements(Bool_t b) { fStoreEmptyElements = b; }
 
-  Bool_t WithTDC() { return fModeTDC != MOLLERModeTDC::kNone; };
   Bool_t WithADC() { return fModeADC != MOLLERModeADC::kNone; };
 
   // Standard apparatus re-implemented functions
@@ -145,8 +111,6 @@ public:
 
   virtual Int_t      DecodeADC( const THaEvData&, MOLLERElement *blk,
 				THaDetMap::Module *d, Int_t chan, Bool_t IsRef);
-  virtual Int_t      DecodeTDC( const THaEvData&, MOLLERElement *blk,
-      THaDetMap::Module *d, Int_t chan, Bool_t IsRef);
 
   // Utility functions
   // Can be re-implemented by other classes to specify a different
@@ -173,9 +137,7 @@ protected:
   Int_t fNcolsMax;      ///< Max number of columns out of all rows
   Int_t  fNlayers;      ///< Number of layers (in z-direction)
   MOLLERModeADC::Mode fModeADC;      //< ADC Mode
-  MOLLERModeTDC::Mode fModeTDC;      //< TDC Mode
   Bool_t fDisableRefADC; //< Reference ADC may be optionally disabled
-  Bool_t fDisableRefTDC; //< Reference TDC may be optionally disabled
   Bool_t fStoreEmptyElements; //< Do not store data for empty elements in rootfile
   Bool_t fIsMC; // flag to indicate if data are simulated;
   Int_t fF1_RollOver;
@@ -213,7 +175,6 @@ protected:
   // Per event data
   Int_t      fNhits;     ///< Number of hits in event
   Int_t      fNRefhits;     ///< Number of reference hits in event
-  Int_t      fNGoodTDChits;     ///< Number of good TDC hits in event
   Int_t      fNGoodADChits;     ///< Number of good ADC hits in event
 
   // Flags for enabling and disabling various features

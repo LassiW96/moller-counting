@@ -62,26 +62,6 @@ namespace MOLLERData {
     PulseADCData         pulse;       //< Pulse information
   };
 
-  ///////////////////////////////////////////////////////////////////////////////
-  // TDC data with both leading and trailing edge info
-  struct TDCHit {
-    SingleData le;  //< Leading edge time
-    SingleData te; //< Trailing edge time
-    SingleData ToT;   //< Time-over-Threshold (if trailing edge provided)
-    Int_t elemID; //< Element ID
-    UInt_t TrigTime; //< F1 trigger time
- };
-
-  ///////////////////////////////////////////////////////////////////////////////
-  // TDC data structure
-  struct TDCData {
-    // all public variables
-    Double_t offset; //< Time offset
-    Double_t cal;    //< Conversion factor
-    Double_t GoodTimeCut;    //< Time Cut to select good hit in multihit TDC.
-    std::vector<TDCHit> hits;
-    Int_t good_hit; //< Index of good hit
-  };
 
   ///////////////////////////////////////////////////////////////////////////////
   // ADC single valued
@@ -146,52 +126,6 @@ namespace MOLLERData {
       Int_t  fMode; //< ADC mode where 0 == simple, 1 == multi function
   };
 
-  ///////////////////////////////////////////////////////////////////////////////
-  // TDC single valued
-  class TDC {
-    public:
-      TDC(Double_t offset = 0.0, Double_t cal = 1.0, Double_t GoodTimeCut = 1.0);
-      virtual ~TDC() {};
-
-      // Getters
-      Double_t GetOffset()           const { return fTDC.offset;     }
-      Double_t GetCal()              const { return fTDC.cal;        }
-      Double_t GetGoodTimeCut()              const { return fTDC.GoodTimeCut;}
-      Double_t GetGoodHitIndex()            const { return fTDC.good_hit; }
-      TDCHit GetHit(UInt_t i)       const { return fTDC.hits[i];    }
-      SingleData GetLead(UInt_t i)  const { return GetHit(i).le;    }
-      SingleData GetTrail(UInt_t i) const { return GetHit(i).te;    }
-      TDCHit GetGoodHit()           const { return fTDC.hits[fTDC.good_hit]; }
-      Int_t GetNHits()                    { return fTDC.hits.size();    }
-      UInt_t GetTrigTime(UInt_t i)  const { return GetHit(i).TrigTime;   }
-      std::vector<TDCHit> GetAllHits() const { return  fTDC.hits; }
-
-      // Helper functions to get leading edge info
-      Double_t GetData(UInt_t i)     const { return GetLead(i).val;  }
-      Double_t GetDataRaw(UInt_t i)  const { return GetLead(i).raw;  }
-      Double_t GetToT(UInt_t i)      const { return GetHit(i).ToT.val; }
-
-      // Setters
-      void SetOffset(Double_t var)  { fTDC.offset = var; }
-      void SetCal(Double_t var) { fTDC.cal = var; }
-      void SetGoodTimeCut(Double_t var) { fTDC.GoodTimeCut = var; }
-      void SetGoodHit(Int_t i) { fTDC.good_hit = i; }
-      
-      // Process data sets raw value, ped-subtracted and calibrated data
-      virtual void Process(Int_t elemID, Double_t var, Double_t edge = 0);
-      virtual void ProcessSimple(Int_t elemID, Double_t var, Int_t nhit,UInt_t TrigTime);
-
-      // Do we have TDC data for this event?
-      Bool_t HasData() { return fHasData; }
-
-      // Clear event
-      virtual void Clear();
-
-    protected:
-      TDCData fTDC; ///< TDC hit container
-      Bool_t fHasData;
-      size_t fEdgeIdx[2]; //< Current index of the next hit data
-  };
 
   ///////////////////////////////////////////////////////////////////////////////
   // Samples (e.g. ADC Waveform data)

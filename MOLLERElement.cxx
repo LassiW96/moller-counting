@@ -15,8 +15,8 @@ ClassImp(MOLLERElement);
 // Constructor for generic Element (no-data)
 MOLLERElement::MOLLERElement(Double_t x, Double_t y,
     Double_t z, Int_t row, Int_t col, Int_t layer, Int_t id) :
-  fX(x), fY(y), fZ(z), fE(0), fAgain(0), fAtime(kBig), fTDCtime(kBig), fRow(row), fCol(col), fLayer(layer),
-  fStat(0), fID(id), fADC(nullptr), fTDC(nullptr), fWaveform(nullptr)
+  fX(x), fY(y), fZ(z), fE(0), fAgain(0), fAtime(kBig), fRow(row), fCol(col), fLayer(layer),
+  fStat(0), fID(id), fADC(nullptr), fWaveform(nullptr)
 {
 }
 
@@ -24,7 +24,6 @@ MOLLERElement::MOLLERElement(Double_t x, Double_t y,
 MOLLERElement::~MOLLERElement()
 {
   delete fADC;
-  delete fTDC;
   delete fWaveform;
 }
 
@@ -32,7 +31,7 @@ MOLLERElement::~MOLLERElement()
 // Check if this block has any ADC data
 Bool_t MOLLERElement::HasData()
 {
-  return ( ( fADC && fADC->HasData() ) || ( fTDC && fTDC->HasData() ) || ( fWaveform && fWaveform->HasData() ) );
+  return ( ( fADC && fADC->HasData() ) || ( fWaveform && fWaveform->HasData() ) );
 }
 
 // Check if this block has any ADC data
@@ -51,12 +50,9 @@ void MOLLERElement::Clear( Option_t* opt )
   fStat = 0; // Reset status to 0, unseen
   if(fADC)
     fADC->Clear();
-  if(fTDC)
-    fTDC->Clear();
   if(fWaveform)
     fWaveform->Clear();
   fAtime = kBig;
-  fTDCtime = kBig;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,14 +61,6 @@ void MOLLERElement::SetADC(Double_t ped, Double_t gain)
 {
   delete fADC;
   fADC = new MOLLERData::ADC(ped,gain);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Create a TDC data structure
-void MOLLERElement::SetTDC(Double_t offset, Double_t cal, Double_t GoodTimeCut)
-{
-  delete fTDC;
-  fTDC = new MOLLERData::TDC(offset,cal,GoodTimeCut);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

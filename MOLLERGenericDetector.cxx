@@ -33,8 +33,7 @@ ClassImp(MOLLERGenericDetector);
 MOLLERGenericDetector::MOLLERGenericDetector( const char* name, const char* description,
     THaApparatus* apparatus ) :
   THaNonTrackingDetector(name,description,apparatus), fNrows(0),fNcolsMax(0),
-  fNlayers(0), fModeADC(MOLLERModeADC::kADCSimple), fModeTDC(MOLLERModeTDC::kNone),
-  fDisableRefADC(true),fDisableRefTDC(true),
+  fNlayers(0), fModeADC(MOLLERModeADC::kADCSimple), fDisableRefADC(true),
   fStoreEmptyElements(false), fIsMC(false), fChanMapStart(0),
   fCoarseProcessed(false), fFineProcessed(false),
   fConst(1.0), fSlope(0.0), fAccCharge(0.0), fStoreRawHits(false)
@@ -137,7 +136,6 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
   if(is_mc){// if this is simulated data, we do not care about the reference channel
     fIsMC = true;
     fDisableRefADC = true;
-    fDisableRefTDC = true;
   }
   fSizeRow = dxyz[0];// in transport coordinates, row # varies with x axis
   fSizeCol = dxyz[1];// in transport coordinates, col # varies with y axis
@@ -246,14 +244,7 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
   } else {
     nelem = fDetMap->GetTotNumChan() - nskipped - nrefchans ; // Exclude skipped channels in count
 
-    if( WithTDC() && WithADC() ) {
-      if(nelem != 2*fNelem ) {
-        Error( Here(here), "Number of crate module channels (%d) "
-            "inconsistent with 2 channels per block (%d, expected)", nelem,
-            fNelem );
-        err = kInitError;
-      }
-    } else if ( nelem != fNelem) {
+    if ( nelem != fNelem) {
       Error( Here(here), "Number of crate module channels (%d) "
 	     "inconsistent with number of blocks (%d) nskipped (%d) nrefchans (%d) ", nelem, fNelem , nskipped,nrefchans);
       err = kInitError;
@@ -268,20 +259,12 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
   if( !chanmap.empty() ) {
     // If a map is found in the database, ensure it has the correct size
     Int_t cmapsize = chanmap.size();
-    if( WithTDC() && WithADC() ) {
-      if(cmapsize - nskipped- nrefchans != 2*fNelem ) {
-        Error( Here(here), "Number of logical channel to detector block map (%d) "
-            "inconsistent with 2 channels per block (%d, expected)", cmapsize,
-            2*fNelem );
-        err = kInitError;
-      }
-    } else if ( cmapsize - nskipped- nrefchans != fNelem) {
+    if ( cmapsize - nskipped- nrefchans != fNelem) {
       Error( Here(here), "Number of logical channel to detector block map (%d) "
           "inconsistent with number of blocks (%d)", cmapsize, fNelem );
       err = kInitError;
     }
   }
-  Int_t NRefTDCElem=0;
   Int_t NRefADCElem=0;
   std::vector<Int_t> RefMode; //< Reftime MODE tdc =0 , adc = 1
   if( !err ) {
@@ -314,14 +297,7 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
       if(!model_in_detmap) {
         d->SetModel(cratemap->getModel(d->crate,d->slot));
       }
-      if( model_in_detmap) {
-	if (d->GetModel() == 526) {
-	  d->MakeTDC(); 
-	} else {
-          Error( Here(here), "Need to modify MOLLERGenericDetector to specify whether TDC or ADC for module %d.", i);   
-	}
-      }
-      if(!d->IsADC() && !d->IsTDC()) {
+      if(!d->IsADC()) {
         // An unknown module was specified, complain and exit
         Error( Here(here), "Unknown module specified for module %d.", i);
         err = kInitError;
@@ -348,11 +324,7 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
 	        RefMode.push_back(1);
 		fDisableRefADC = kFALSE;
 		NRefADCElem++;
-              } else {
-	        RefMode.push_back(0);
-		fDisableRefTDC = kFALSE;
-		NRefTDCElem++;
-              }
+              } 
      	      fRefChanMap[i][chan]=kr;
   	      if ( krmod==0) fRefChanLo[i]=chan+d->lo;
   	      if ( krmod>=0) fRefChanHi[i]=chan+d->lo;
@@ -364,11 +336,9 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
           } else {
             km = d->IsADC() ? ka : kt;
           }
-          // Count ADC and TDC channels separately
+          // Count ADC channels separately
           if(d->IsADC()) {
             if(chanmap[k]!=-1000) ka++;
-          } else {
-            if(chanmap[k]!=-1000) kt++;
           }
           assert( km < fNelem );
           assert( km >= 0);
@@ -384,10 +354,6 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
         Error( Here(here), "Inconsistent ADC channels, found %d, expected %d.", ka,fNelem);
         return kInitError;
     }
-    if(WithTDC() && kt != fNelem) {
-        Error( Here(here), "Inconsistent TDC channels, found %d, expected %d.", kt,fNelem);
-        return kInitError;
-    }
   }
   // At this point, if an error has been encountered, don't bother continuing,
   // complain and return the error now.
@@ -397,15 +363,12 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
   }
   //
   // ADC and TDC reference time parameters
-  std::vector<Double_t> reftdc_offset, reftdc_cal, reftdc_GoodTimeCut;
   std::vector<Double_t> refadc_ped, refadc_gain, refadc_conv, refadc_thres, refadc_GoodTimeCut;
   std::vector<Double_t> refadc_AmpToIntRatio;
   std::vector<Int_t> refadc_FixThresBin,refadc_NSB,refadc_NSA,refadc_NPedBin;
 
   // Read calibration parameters
-  // Read adc pedestal and gains, and tdc offset and calibration
   // (should be organized by logical channel number, according to channel map)
-  std::vector<Double_t>  tdc_offset, tdc_cal, tdc_GoodTimeCut;
   std::vector<Double_t> adc_ped, adc_gain, adc_conv, adc_thres, adc_timeoffset, adc_GoodTimeCut;
   std::vector<Double_t> adc_AmpToIntRatio;
   std::vector<Int_t> adc_FixThresBin,adc_NSB,adc_NSA,adc_NPedBin;
@@ -434,16 +397,6 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
     vr.push_back({ "refadc.NPedBin",     &refadc_NPedBin,   kIntV,0, 1 });
     vr.push_back({ "refadc.GoodTimeCut",    &refadc_GoodTimeCut,    kDoubleV, 0, 1 });
     }
-  }
-  if(WithTDC()) {
-    vr.push_back({ "tdc.offset",   &tdc_offset, kDoubleV, 0, 1 });
-    vr.push_back({ "tdc.calib",    &tdc_cal,    kDoubleV, 0, 1 });
-    vr.push_back({ "tdc.GoodTimeCut",    &tdc_GoodTimeCut,    kDoubleV, 0, 1 });
-    if (!fDisableRefTDC) {
-    vr.push_back({ "reftdc.offset",   &reftdc_offset, kDoubleV, 0, 1 });
-    vr.push_back({ "reftdc.calib",    &reftdc_cal,    kDoubleV, 0, 1 });
-    vr.push_back({ "reftdc.GoodTimeCut",    &reftdc_GoodTimeCut,    kDoubleV, 0, 1 });
-    }
   };
   vr.push_back({0});
   err = LoadDB( file, date, vr.data(), fPrefix );
@@ -455,45 +408,10 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
   if( err )
     return err;
 
-  std::cout << " Nreftdc = " << NRefTDCElem<< " Nrefadc = " << NRefADCElem << std::endl;
+  std::cout << " Nrefadc = " << NRefADCElem << std::endl;
   // Check that there were either only 1 calibratoin value specified per key
   // or fNelements
-    if (!fDisableRefTDC) {
-       if(reftdc_offset.empty()) { // set all offset to zero
-         ResetVector(reftdc_offset,Double_t(0.0),NRefTDCElem);
-  } else if(reftdc_offset.size() == 1) { // expand vector to specify calibration for all elements
-    Double_t temp=reftdc_offset[0];
-    ResetVector(reftdc_offset,temp,NRefTDCElem);    
-  } else if ( (int)reftdc_offset.size() != NRefTDCElem ) {
-    Error( Here(here), "Inconsistent number of reftdc.offset  specified. Expected "
-	   "%d but got %d",NRefTDCElem,int(reftdc_offset.size()));
-    return kInitError;
-  }
-       //
-       if(reftdc_GoodTimeCut.empty()) { // set all GoodTimeCut to zero
-         ResetVector(reftdc_GoodTimeCut,Double_t(0.0),NRefTDCElem);
-  } else if(reftdc_GoodTimeCut.size() == 1) { // expand vector to specify calibration for all elements
-    Double_t temp=reftdc_GoodTimeCut[0];
-    ResetVector(reftdc_GoodTimeCut,temp,NRefTDCElem);    
-  } else if ( (int)reftdc_GoodTimeCut.size() != NRefTDCElem ) {
-    Error( Here(here), "Inconsistent number of reftdc.GoodTimeCut  specified. Expected "
-	   "%d but got %d",NRefTDCElem,int(reftdc_GoodTimeCut.size()));
-    return kInitError;
-  }
-       //
-       if(reftdc_cal.empty()) { // set all cal to 0.1
-         ResetVector(reftdc_cal,Double_t(0.1),NRefTDCElem);
-  } else if(reftdc_cal.size() == 1) { // expand vector to specify calibration for all elements
-    Double_t temp=reftdc_cal[0];
-    ResetVector(reftdc_cal,temp,NRefTDCElem);    
-  } else if ( (int)reftdc_cal.size() != NRefTDCElem ) {
-    Error( Here(here), "Inconsistent number of reftdc.cal specified. Expected "
-	   "%d but got %d",NRefTDCElem,int(reftdc_cal.size()));
-    return kInitError;
-  }
-    }
-    //
-    if (!fDisableRefADC) {
+  if (!fDisableRefADC) {
   if(refadc_ped.empty()) { // set all ped to zero
     ResetVector(refadc_ped,Double_t(0.0),NRefADCElem);
   } else if(refadc_ped.size() == 1) { // expand vector to specify calibration for all elements
@@ -613,16 +531,14 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
   }
 
     //
-    fNRefElem = NRefADCElem + NRefTDCElem;
+    fNRefElem = NRefADCElem;
     // Set the reference time elements
     if (!RefMode.empty()) {
     DeleteContainer(fRefElements);
     fRefElements.resize(fNRefElem);
     for (Int_t nr=0;nr<fNRefElem;nr++) {
       MOLLERElement *el = MakeElement(0,0,0,nr,0,0,nr);
-      if (RefMode[nr] ==0) {
-	el->SetTDC(reftdc_offset[nr],reftdc_cal[nr],reftdc_GoodTimeCut[nr]);
-      } else {
+      if (RefMode[nr] ==1) {
             if( fModeADC == MOLLERModeADC::kWaveform ) {
               el->SetWaveform(refadc_ped[nr],refadc_gain[nr],refadc_conv[nr],refadc_GoodTimeCut[nr]);
 	      MOLLERData::Waveform *wave = el->Waveform();
@@ -643,38 +559,6 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
     }
     }
     //
-  if(tdc_offset.empty()) { // set all ped to zero
-    ResetVector(tdc_offset,Double_t(0.0),fNelem);
-  } else if(tdc_offset.size() == 1) { // expand vector to specify calibration for all elements
-    Double_t temp=tdc_offset[0];
-    ResetVector(tdc_offset,temp,fNelem);    
-  } else if ( (int)tdc_offset.size() != fNelem ) {
-    Error( Here(here), "Inconsistent number of adc.ped specified. Expected "
-	   "%d but got %d",fNelem,int(tdc_offset.size()));
-    return kInitError;
-  }
-
-  if(tdc_GoodTimeCut.empty()) { //
-    ResetVector(tdc_GoodTimeCut,Double_t(0.0),fNelem);
-  } else if(tdc_GoodTimeCut.size() == 1) { // expand vector to specify calibration for all elements
-    Double_t temp=tdc_GoodTimeCut[0];
-    ResetVector(tdc_GoodTimeCut,temp,fNelem);    
-  } else if ( (int)tdc_GoodTimeCut.size() != fNelem ) {
-    Error( Here(here), "Inconsistent number of adc.ped specified. Expected "
-	   "%d but got %d",fNelem,int(tdc_GoodTimeCut.size()));
-    return kInitError;
-  }
-
-  if(tdc_cal.empty()) { //
-    ResetVector(tdc_cal,Double_t(0.1),fNelem);
-  } else if(tdc_cal.size() == 1) { // expand vector to specify calibration for all elements
-    Double_t temp=tdc_cal[0];
-    ResetVector(tdc_cal,temp,fNelem);    
-  } else if ( (int)tdc_cal.size() != fNelem ) {
-    Error( Here(here), "Inconsistent number of adc.ped specified. Expected "
-	   "%d but got %d",fNelem,int(tdc_cal.size()));
-    return kInitError;
-  }
 
   if(adc_ped.empty()) { // set all ped to zero
     ResetVector(adc_ped,Double_t(0.0),fNelem);
@@ -854,9 +738,6 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
 	      }
             }
           }
-          if( WithTDC() ) { // TDC info
-            e->SetTDC(tdc_offset[k],tdc_cal[k],tdc_GoodTimeCut[k]);
-          }
           fElements[k] = e;
           fElementGrid[r][c][l] = e;
         }
@@ -876,7 +757,7 @@ Int_t MOLLERGenericDetector::DefineVariables( EMode mode )
   // Initialize global variables
 
   if( mode == kDefine && fIsSetup ) return kOK;
-  if( !( WithADC() || WithTDC() ) ) {
+  if( !( WithADC() ) ) {
     Error( Here("DefineVariables"),
         "GenericDetector %s defined with no data payload.",GetName());
     return kInitError;
@@ -889,7 +770,7 @@ Int_t MOLLERGenericDetector::DefineVariables( EMode mode )
   RVarDef vars[] = {
     { "nhits", "Nhits",  "fNhits" },
     { "nrefhits", "Number of reference time hits",  "fNRefhits" },
-    { "ngoodTDChits", "NGoodTDChits",  "fNGoodTDChits" },
+//    { "ngoodTDChits", "NGoodTDChits",  "fNGoodTDChits" },
     { "ngoodADChits", "NGoodADChits",  "fNGoodADChits" },
     { 0 }
   };
@@ -902,26 +783,6 @@ Int_t MOLLERGenericDetector::DefineVariables( EMode mode )
 
   std::vector<RVarDef> ve;
 
-  // TDC Reference Time variables 
-  if(WithTDC() && !fDisableRefTDC) {
-    ve.push_back({ "Ref.tdcelemID", "Ref Time Calibrated TDC value", "fRefGood.TDCelemID" });
-    ve.push_back({ "Ref.tdc", "Ref Time Calibrated TDC value", "fRefGood.t" });
-    ve.push_back({ "Ref.tdc_mult", "Ref Time # hits in channel", "fRefGood.t_mult" });
-    if(fModeTDC != MOLLERModeTDC::kTDCSimple) {
-      // We have trailing edge and Time-Over-Threshold info to store
-      ve.push_back({"Ref.tdc_te","Ref Time Calibrated TDC trailing info","fRefGood.t_te"});
-      ve.push_back({"Ref.tdc_tot","Ref Time  Time Over Threshold","fRefGood.t_ToT"});
-    }
-    if(fStoreRawHits) {
-      ve.push_back({ "Ref.hits.TDCelemID",   "Ref Time ALL index",  "fRefRaw.TDCelemID" });
-      ve.push_back({ "Ref.hits.t",   "Ref Time All TDC leading edge times",  "fRefRaw.t" });
-      if(fModeTDC != MOLLERModeTDC::kTDCSimple) {
-        ve.push_back({ "Ref.hits.t_te",   "Ref Time All TDC trailing edge times",  "fRefRaw.t_te" });
-        ve.push_back({ "Ref.hits.t_tot",  "Ref Time All TDC Time-over-threshold",  "fRefRaw.t_ToT" });
-      }
-    }
-  }
-//
 //
   if(WithADC() && !fDisableRefADC) {
     ve.push_back({ "Ref.adcelemID", "Element ID for Ref ADC",  "fRefGood.ADCelemID" }),
@@ -970,29 +831,6 @@ Int_t MOLLERGenericDetector::DefineVariables( EMode mode )
     }
   }
 
-  // Are we using TDCs? If so, define variables for TDCs
-  if(WithTDC()) {
-    ve.push_back({ "tdcrow", "Row for block in data vectors",  "fGood.TDCrow" }),
-    ve.push_back({ "tdccol", "Col for block in data vectors",  "fGood.TDCcol" }),
-    ve.push_back({ "tdcelemID", "Element ID for block in data vectors",  "fGood.TDCelemID" }),
-    ve.push_back({ "tdclayer", "Layer for block in data vectors",  "fGood.TDClayer" }),
-    ve.push_back({ "tdc", "Calibrated TDC value", "fGood.t" });
-    ve.push_back({ "tdc_mult", "TDC # of hits per channel", "fGood.t_mult" });
-    if(fModeTDC != MOLLERModeTDC::kTDCSimple) {
-      // We have trailing edge and Time-Over-Threshold info to store
-      ve.push_back({"tdc_te","Calibrated TDC trailing info","fGood.t_te"});
-      ve.push_back({"tdc_tot","Time Over Threshold","fGood.t_ToT"});
-    }
-    if(fStoreRawHits) {
-      ve.push_back({ "hits.TDCelemID",   "All TDC Element ID",  "fRaw.TDCelemID" });
-      ve.push_back({ "hits.t",   "All TDC leading edge times",  "fRaw.t" });
-      if(fModeTDC != MOLLERModeTDC::kTDCSimple) {
-        ve.push_back({ "hits.t_te",   "All TDC trailing edge times",  "fRaw.t_te" });
-        ve.push_back({ "hits.t_tot",  "All TDC Time-over-threshold",  "fRaw.t_ToT" });
-      }
-    }
-  }
-
   // Are we using multi-valued ADCs? Then define the samples variables
   if(fModeADC == MOLLERModeADC::kWaveform && fStoreRawHits) {
     ve.push_back({ "samps_idx", "Index in samples vector for given row-col module",
@@ -1023,7 +861,7 @@ Int_t MOLLERGenericDetector::Decode( const THaEvData& evdata )
   //static const char* const here = "Decode()";
   // Loop over modules for the reference time
   MOLLERElement *blk = nullptr;
-  if (!fDisableRefADC || !fDisableRefTDC) {
+  if (!fDisableRefADC) {
   for( UInt_t imod = 0; imod < fDetMap->GetSize(); imod++ ) {
     if (!fModuleRefTimeFlag[imod]) continue;
     THaDetMap::Module *d = fDetMap->GetModule( imod );
@@ -1034,8 +872,6 @@ Int_t MOLLERGenericDetector::Decode( const THaEvData& evdata )
 	fNRefhits++;
          if(d->IsADC()) {
 	   DecodeADC(evdata,blk,d,chan,kTRUE);
-         } else if ( d->IsTDC()) {
-	    DecodeTDC(evdata,blk,d,chan,kTRUE);
          }
     }
   }
@@ -1056,8 +892,6 @@ Int_t MOLLERGenericDetector::Decode( const THaEvData& evdata )
       blk = fElements[ fChanMap[imod][chan-d->lo] ];
       if(d->IsADC()) {
         DecodeADC(evdata,blk,d,chan,kFALSE);
-      } else if ( d->IsTDC()) {
-        DecodeTDC(evdata,blk,d,chan,kFALSE);
       }
     }
   }
@@ -1130,87 +964,6 @@ Int_t MOLLERGenericDetector::DecodeADC( const THaEvData& evdata,
 }
 
 
-Int_t MOLLERGenericDetector::DecodeTDC( const THaEvData& evdata,
-    MOLLERElement *blk, THaDetMap::Module *d, Int_t chan,Bool_t IsRef)
-{
-  //
-  Int_t nhit = evdata.GetNumHits(d->crate, d->slot, chan);
-  Double_t reftime  = 0;
-  // For VETROC the TDC hits are not in time order. Need to arrange in time order.
-  std::vector<TDCHits> tdchit;
-  if(fModeTDC == MOLLERModeTDC::kTDC )  {
-    for(Int_t ihit = 0; ihit < nhit; ihit++) {
-      TDCHits c1 = {evdata.GetRawData(d->crate, d->slot, chan, ihit),evdata.GetData(d->crate, d->slot, chan, ihit)};
-      tdchit.push_back(c1);
-    }
-    std::sort(tdchit.begin(), tdchit.end(), [](const TDCHits& c1, const TDCHits& c2) {return c1.rawtime < c2.rawtime;});
-  }
-  //
-  if(!IsRef && !fDisableRefTDC && d->refindex>=0) {
-     MOLLERElement *refblk = fRefElements[d->refindex];
-    if(!refblk->TDC()->HasData()) {
-
-      //      std::cout << "Error reference TDC channel has no hits! refindex = " << d->refindex << " num ref tot = " << fNRefhits << " size = " << fRefElements.size() << std::endl;
-      
-    } else {
-       Int_t nhits = refblk->TDC()->GetNHits(); 
-      Double_t MinDiff = 10000.;
-       Int_t HitIndex = 0;
-       Double_t RefCent = refblk->TDC()->GetGoodTimeCut();
-       for (Int_t ih=0;ih<nhits;ih++) {
- 	 Double_t tempdata= refblk->TDC()->GetData(ih);
-	 if (d->GetModel() == 6401) {
- 	    tempdata= refblk->TDC()->GetDataRaw(ih);
-            Int_t trigtime = refblk->TDC()->GetTrigTime(ih);
-	    if ( trigtime>tempdata) tempdata+=fF1_RollOver;
-	  Double_t cal=refblk->TDC()->GetCal();
-	  Double_t offset=refblk->TDC()->GetOffset();
-	  tempdata=(tempdata-trigtime-offset)*cal;
-	 }
-	 if (abs(tempdata-RefCent) < MinDiff) {
-           HitIndex = ih;
-	   MinDiff = abs(tempdata-RefCent);
-	 }
-       }      
-       reftime = refblk->TDC()->GetDataRaw(HitIndex);
-      refblk->TDC()->SetGoodHit(HitIndex);
-    }
-  }
-  
-  if(fIsMC)reftime = 1000.0;
-  
-  Int_t edge = 0;
-  Int_t elemID=blk->GetID();
-  for(Int_t ihit = 0; ihit < nhit; ihit++) {
-        if(fModeTDC == MOLLERModeTDC::kTDCSimple) {
-	  UInt_t rawdata = evdata.GetData(d->crate, d->slot, chan, ihit);
-	   if (!IsRef && d->GetModel() == 6401) { // F1 TDC
-	     if ( abs(rawdata-reftime) > fF1_TimeWindow) {
-	       if (rawdata > reftime){ reftime+=fF1_RollOver; 
-	       }else if(rawdata <= reftime){ rawdata+=fF1_RollOver;} 
-	     } 
-	   }
-	  UInt_t TrigTime = 0;
-	   Int_t LeadingEdge=0;
-	  if (d->GetModel() == 6401) {
-	    TrigTime = evdata.GetRawData(d->crate, d->slot, chan, ihit); // for F1 "raw" is trigger time
-	    if(IsRef && rawdata<TrigTime) rawdata+=fF1_RollOver; // rollvoer correction  Reftdc[i]
-	  } else {
-	    LeadingEdge=evdata.GetRawData(d->crate, d->slot, chan, ihit); // for other TDC "raw" is the leading edge bit
-	  }
-	  if (LeadingEdge ==0) blk->TDC()->ProcessSimple(elemID,rawdata - reftime,ihit,TrigTime);
-	} else {
-          edge = tdchit[ihit].edge;
-      //           std::cout << ihit << " " << evdata.GetData(d->crate, d->slot, chan, ihit) - reftime << " " << edge << std::endl;
-          if (edge ==1 && ihit ==0) continue; // skip first hit if trailing edge
-          if (fModeTDC != MOLLERModeTDC::kTDCSimple && edge ==0 && ihit == nhit-1)  continue; // skip last hit if leading edge
-          blk->TDC()->Process(elemID,tdchit[ihit].rawtime - reftime, edge);
-       }
-   }
-
-  return nhit;
-}
-
 //_____________________________________________________________________________
 void MOLLERGenericDetector::Clear( Option_t* opt )
 {
@@ -1221,7 +974,6 @@ void MOLLERGenericDetector::Clear( Option_t* opt )
 
   fNhits = 0;
   fNRefhits = 0;
-  fNGoodTDChits = 0;
   fNGoodADChits = 0;
   fCoarseProcessed = false;
   fFineProcessed = false;
@@ -1246,56 +998,6 @@ Int_t MOLLERGenericDetector::CoarseProcess(TClonesArray& )// tracks)
   for(Int_t k = 0; k < fNRefElem; k++) {
     blk = fRefElements[k];
     if(!blk) continue;
-    if(WithTDC() ) {
-      if ( blk->TDC()->HasData()) {
-    fRefGood.TDCrow.push_back(blk->GetRow());
-    fRefGood.TDCcol.push_back(blk->GetCol());
-    fRefGood.TDClayer.push_back(blk->GetLayer());
-    fRefGood.TDCelemID.push_back(blk->GetID());
-        const MOLLERData::TDCHit &hit = blk->TDC()->GetGoodHit();
-	Double_t tempval=hit.le.val;
-        if(fModeTDC == MOLLERModeTDC::kTDCSimple) { // need to recalculate for F1 data
-	  Double_t cal=blk->TDC()->GetCal();
-	  Double_t offset=blk->TDC()->GetOffset();
-	  tempval= (hit.le.raw-hit.TrigTime-offset)*cal;
-	}
-        fRefGood.t.push_back(tempval);
-        fRefGood.t_mult.push_back(blk->TDC()->GetNHits());
-        if(fModeTDC == MOLLERModeTDC::kTDC) { // has trailing info
-          fRefGood.t_te.push_back(hit.te.val);
-          fRefGood.t_ToT.push_back(hit.ToT.val);
-        }
-      } else if ( fStoreEmptyElements ) {
-    fRefGood.TDCrow.push_back(blk->GetRow());
-    fRefGood.TDCcol.push_back(blk->GetCol());
-    fRefGood.TDClayer.push_back(blk->GetLayer());
-    fRefGood.TDCelemID.push_back(blk->GetID());
-        fRefGood.t_mult.push_back(0);
-        fRefGood.t.push_back(kBig);
-        if(fModeTDC == MOLLERModeTDC::kTDC) {
-          fRefGood.t_te.push_back(kBig);
-          fRefGood.t_ToT.push_back(kBig);
-        }
-      }
-        if(fStoreRawHits) {
-            const std::vector<MOLLERData::TDCHit> &hits = blk->TDC()->GetAllHits();
-            for( const auto &hit : hits) {
-              fRefRaw.TDCelemID.push_back(hit.elemID);
-	      Double_t tempval=hit.le.val;
-              if(fModeTDC == MOLLERModeTDC::kTDCSimple) { // need to recalculate for F1 data
-	         Double_t cal=blk->TDC()->GetCal();
-	         Double_t offset=blk->TDC()->GetOffset();
-	         tempval= (hit.le.raw-hit.TrigTime-offset)*cal;
-	      }
-	         fRefRaw.t.push_back(tempval);
-               if(fModeTDC == MOLLERModeTDC::kTDC) { // has trailing info
-              fRefRaw.t_te.push_back(hit.te.val);
-              fRefRaw.t_ToT.push_back(hit.ToT.val);
-	       }
-              }
-	}
-    }
-    //
     //   if(WithADC() && !fDisableRefADC ) {
     if( WithADC() && blk->HasADCData() ){
       if (fModeADC == MOLLERModeADC::kADC && blk->ADC()->HasData() ) {
@@ -1355,7 +1057,6 @@ Int_t MOLLERGenericDetector::CoarseProcess(TClonesArray& )// tracks)
               fRefRaw.a_time.push_back(hit.time.val);
              }
           }
-	  //    } else if  (fModeADC == MOLLERModeADC::kWaveform ){ // Waveform mode
       } else if( fModeADC == MOLLERModeADC::kWaveform && blk->Waveform()->HasData()){
         MOLLERData::Waveform *wave = blk->Waveform();
 	if(wave->HasData()) {		
@@ -1433,45 +1134,6 @@ Int_t MOLLERGenericDetector::CoarseProcess(TClonesArray& )// tracks)
     // Skip blocks that have no new data (unless allowed by the user)
      if(!blk->HasData() && !fStoreEmptyElements)
       continue;
-
-    if(WithTDC() ) {
-      if(blk->TDC()->HasData() && blk->TDC()->GetGoodHitIndex() != -1) {
-        fNGoodTDChits++;
-        const MOLLERData::TDCHit &hit = blk->TDC()->GetGoodHit();
-        fGood.TDCrow.push_back(blk->GetRow());
-        fGood.TDCcol.push_back(blk->GetCol());
-        fGood.TDClayer.push_back(blk->GetLayer());
-        fGood.TDCelemID.push_back(blk->GetID());
-        fGood.t.push_back(hit.le.val);
-        fGood.t_mult.push_back(blk->TDC()->GetNHits());
-        if(fModeTDC == MOLLERModeTDC::kTDC) { // has trailing info
-          fGood.t_te.push_back(hit.te.val);
-          fGood.t_ToT.push_back(hit.ToT.val);
-        }
-      } else if ( fStoreEmptyElements ) {
-        fGood.TDCrow.push_back(blk->GetRow());
-        fGood.TDCcol.push_back(blk->GetCol());
-        fGood.TDClayer.push_back(blk->GetLayer());
-        fGood.TDCelemID.push_back(blk->GetID());
-         fGood.t.push_back(kBig);
-        fGood.t_mult.push_back(0);
-        if(fModeTDC == MOLLERModeTDC::kTDC) {
-          fGood.t_te.push_back(kBig);
-          fGood.t_ToT.push_back(kBig);
-        }
-      }
-      if(fStoreRawHits) {
-            const std::vector<MOLLERData::TDCHit> &hits = blk->TDC()->GetAllHits();
-            for( const auto &hit : hits) {
-              fRaw.TDCelemID.push_back(hit.elemID);
-              fRaw.t.push_back(hit.le.val);
-               if(fModeTDC == MOLLERModeTDC::kTDC) { // has trailing info
-              fRaw.t_te.push_back(hit.te.val);
-              fRaw.t_ToT.push_back(hit.ToT.val);
-	       }
-              }
-      }
-    }
 
     if(WithADC()) {
       if(fModeADC != MOLLERModeADC::kWaveform) {
@@ -1602,20 +1264,6 @@ Int_t MOLLERGenericDetector::CoarseProcess(TClonesArray& )// tracks)
 Int_t MOLLERGenericDetector::FindGoodHit(MOLLERElement *blk)
 {
   Int_t GoodHit=0;  
-  if (WithTDC()&& blk->TDC()->HasData()) {
-       Int_t nhits = blk->TDC()->GetNHits(); 
-       Double_t MinDiff = 10000.;
-       Int_t HitIndex = -1;
-       Double_t GoodTimeCut = blk->TDC()->GetGoodTimeCut();
-       for (Int_t ih=0;ih<nhits;ih++) {
-	 if (abs(blk->TDC()->GetData(ih)-GoodTimeCut) < MinDiff) {
-           HitIndex = ih;
-	   MinDiff = abs(blk->TDC()->GetData(ih)-GoodTimeCut);
-	 }
-       }      
-       blk->TDC()->SetGoodHit(HitIndex);
-      GoodHit=1;
-  }
   if (WithADC()) {		
     if (fModeADC == MOLLERModeADC::kADCSimple) {
            blk->ADC()->SetGoodHit(-1);

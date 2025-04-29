@@ -6,12 +6,11 @@
 #include "THaAnalyzer.h"
 #include "THaApparatus.h"
 #include "TString.h"
-
+//bool WITH_DEBUG=1;
 void replay_fadc( int runnum=770, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000 ){
     MOLLERSpectrometer *moller = new MOLLERSpectrometer("moller", "Generic apparatus");
     MOLLERGenericDetector *det = new MOLLERGenericDetector("scint", "scint");
     det->SetModeADC(MOLLERModeADC::kWaveform);
-    det->SetModeTDC(MOLLERModeTDC::kNone);
     det->SetStoreRawHits(1);
 
     moller->AddDetector(det);
@@ -39,7 +38,8 @@ void replay_fadc( int runnum=770, int firstsegment=0, int maxsegments=1, long fi
     while( segcounter < maxsegments && segment - firstsegment < maxsegments ){
 
     TString codafilename;
-    codafilename.Form( "%s/vtp_%d.evio.%d", prefix.Data(), runnum, segment );
+    codafilename.Form( "%s/test_vtp_%d.evio.%d", prefix.Data(), runnum, segment );
+    //codafilename.Form( "%s/vtp_%d.evio.%d", prefix.Data(), runnum, segment );
 
     segmentexists = true;
     
@@ -79,7 +79,7 @@ void replay_fadc( int runnum=770, int firstsegment=0, int maxsegments=1, long fi
   outfilename.Form( "%s/moller_fadc_replayed_%d_seg%d_%d.root", prefix.Data(), runnum,firstsegment,lastsegment);
 
   analyzer->SetVerbosity(2);
-  analyzer->SetMarkInterval(100);
+  analyzer->SetMarkInterval(1);
 
   analyzer->EnableBenchmarks();
   
