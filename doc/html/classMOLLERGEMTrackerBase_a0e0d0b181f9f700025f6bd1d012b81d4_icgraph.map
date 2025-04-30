@@ -1,0 +1,14 @@
+<map id="MOLLERGEMTrackerBase::InitEfficiencyHistos" name="MOLLERGEMTrackerBase::InitEfficiencyHistos">
+<area shape="rect" id="Node000001" title=" " alt="" coords="809,37,992,77"/>
+<area shape="rect" id="Node000002" href="$classMOLLERGEMSpectrometerTracker.html#ad582aec7a6275fb8dac8c549700b13b6" title=" " alt="" coords="523,5,761,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="795,47,761,43,762,37,796,42"/>
+<area shape="rect" id="Node000003" href="$classMOLLERGEMTrackerBase.html#ab66f8372bbe4dec1ed43454cc8949ac9" title=" " alt="" coords="551,69,733,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="796,73,734,81,733,75,795,68"/>
+<area shape="rect" id="Node000004" href="$classMOLLERGEMTrackerBase.html#a852256511dac5b5f9ee3387096c56211" title=" " alt="" coords="292,69,475,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="537,101,475,101,475,95,537,96"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="488,78,550,78,550,83,488,83"/>
+<area shape="rect" id="Node000005" href="$classMOLLERGEMSpectrometerTracker.html#a520b6d81eae9d45373444a11e8d8ffce" title=" " alt="" coords="5,37,244,77"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="278,79,244,75,244,69,279,74"/>
+<area shape="rect" id="Node000006" href="$classMOLLERGEMSpectrometerTracker.html#af6f774d661c3ee805d4a4d0e7fa67882" title=" " alt="" coords="5,101,244,141"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="279,105,244,109,244,104,278,100"/>
+</map>

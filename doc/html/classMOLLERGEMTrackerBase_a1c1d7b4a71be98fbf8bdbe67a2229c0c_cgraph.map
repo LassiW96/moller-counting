@@ -1,0 +1,29 @@
+<map id="MOLLERGEMTrackerBase::AddNewTrack" name="MOLLERGEMTrackerBase::AddNewTrack">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,238,188,278"/>
+<area shape="rect" id="Node000002" href="$classMOLLERGEMTrackerBase.html#aae25377a89ad5fdeb14deaf4f56d6d6a" title=" " alt="" coords="238,43,421,83"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,236,160,170,195,133,234,100,255,87,258,92,238,104,199,137,164,174,114,239"/>
+<area shape="rect" id="Node000003" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="701,216,829,241"/>
+<area shape="poly" id="edge11_Node000001_Node000003" title=" " alt="" coords="133,235,181,213,235,194,351,165,444,150,489,149,537,152,654,173,697,187,734,207,732,211,695,192,653,178,537,157,489,154,444,155,352,170,237,199,183,218,135,240"/>
+<area shape="rect" id="Node000005" href="$classMOLLERGEMTrackerBase.html#a3d5b34a4862bca10165db869ae9900c7" title=" " alt="" coords="236,209,423,249"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="188,244,222,239,223,245,189,249"/>
+<area shape="rect" id="Node000007" href="$classMOLLERGEMTrackerBase.html#ae5a051c611f0626cc001944dbdbda720" title=" " alt="" coords="471,273,653,313"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="189,262,457,282,457,287,188,267"/>
+<area shape="rect" id="Node000008" href="$classMOLLERGEMTrackerBase.html#a22365ef0bfecfb99e77ba00421514339" title=" " alt="" coords="238,330,421,370"/>
+<area shape="poly" id="edge12_Node000001_Node000008" title=" " alt="" coords="149,276,266,322,264,327,147,281"/>
+<area shape="rect" id="Node000010" href="$classMOLLERGEMTrackerBase.html#acbf7d493451ebcc3b1165fd4f9a6e9aa" title=" " alt="" coords="238,419,421,459"/>
+<area shape="poly" id="edge16_Node000001_Node000010" title=" " alt="" coords="120,276,172,325,238,380,283,410,280,414,234,384,168,329,116,280"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="375,41,434,20,506,5,544,3,583,5,620,13,655,29,677,45,697,66,728,113,749,161,761,202,756,203,744,163,723,115,693,69,674,49,652,33,618,18,582,10,544,8,507,11,435,25,376,46"/>
+<area shape="rect" id="Node000004" href="$classMOLLERGEMTrackerBase.html#ac869a1bf163aae85330073eb650e674e" title=" " alt="" coords="471,43,653,83"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="421,61,457,61,457,66,421,66"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="622,81,655,100,684,124,710,152,750,203,746,206,706,155,680,128,652,104,619,86"/>
+<area shape="poly" id="edge8_Node000005_Node000003" title=" " alt="" coords="404,206,470,194,562,186,654,194,717,209,716,214,653,199,562,192,471,199,405,211"/>
+<area shape="rect" id="Node000006" href="$classMOLLERGEMTrackerBase.html#aefd78e88657e65cdf53a2c06e9348415" title=" " alt="" coords="471,209,653,249"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="423,226,457,226,457,231,423,231"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="654,226,688,226,688,231,654,231"/>
+<area shape="poly" id="edge10_Node000007_Node000003" title=" " alt="" coords="625,270,710,243,712,248,627,275"/>
+<area shape="poly" id="edge13_Node000008_Node000003" title=" " alt="" coords="421,355,475,355,534,351,595,340,652,322,679,307,704,289,744,250,747,253,708,293,682,312,654,327,596,346,535,356,475,360,421,360"/>
+<area shape="rect" id="Node000009" href="$classMOLLERGEMTrackerBase.html#aba544e1296fd770cffcafa03d7b0a7ff" title=" " alt="" coords="471,387,653,427"/>
+<area shape="poly" id="edge14_Node000008_Node000009" title=" " alt="" coords="412,367,468,381,466,386,410,372"/>
+<area shape="poly" id="edge15_Node000009_Node000003" title=" " alt="" coords="621,385,652,366,682,339,708,309,748,252,752,255,713,312,686,343,655,371,623,389"/>
+<area shape="poly" id="edge17_Node000010_Node000003" title=" " alt="" coords="403,457,461,466,526,469,591,461,623,451,652,437,675,420,695,398,725,348,745,297,757,254,762,256,750,299,730,351,699,401,679,423,655,441,625,456,593,466,526,475,460,472,403,462"/>
+</map>

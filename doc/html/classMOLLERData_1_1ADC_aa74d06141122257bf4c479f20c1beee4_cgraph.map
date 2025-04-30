@@ -1,0 +1,8 @@
+<map id="MOLLERData::ADC::GetData" name="MOLLERData::ADC::GetData">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,209,31"/>
+<area shape="rect" id="Node000002" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="497,5,625,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,15,484,15,484,21,209,21"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1ADC.html#a036e5dd3d6e3956f2a71fa715509ba06" title=" " alt="" coords="257,31,449,56"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="210,26,244,29,244,35,209,31"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="449,29,484,25,484,30,450,34"/>
+</map>

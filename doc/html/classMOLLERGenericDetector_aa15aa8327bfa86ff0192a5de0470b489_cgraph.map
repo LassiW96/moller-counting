@@ -1,0 +1,27 @@
+<map id="MOLLERGenericDetector::CoarseProcess" name="MOLLERGenericDetector::CoarseProcess">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,161,187,201"/>
+<area shape="rect" id="Node000002" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="693,136,821,161"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,158,190,125,271,86,365,49,463,22,515,11,557,4,598,6,646,22,679,42,706,69,745,122,740,125,702,72,675,46,644,27,597,11,557,9,516,16,465,27,367,54,274,91,193,130,132,163"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1Waveform.html#a87e87500ed62f0231ca20a1d8a8f1038" title=" " alt="" coords="235,129,416,169"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,165,221,160,221,166,187,171"/>
+<area shape="rect" id="Node000009" href="$classMOLLERGenericDetector.html#a881b6db16e23bb9d66723a88acc06218" title=" " alt="" coords="235,193,416,233"/>
+<area shape="poly" id="edge14_Node000001_Node000009" title=" " alt="" coords="187,191,221,195,221,201,187,196"/>
+<area shape="rect" id="Node000010" href="$classMOLLERGenericDetector.html#ad782689dc4ff395db430649275ac8c66" title=" " alt="" coords="235,257,416,297"/>
+<area shape="poly" id="edge15_Node000001_Node000010" title=" " alt="" coords="139,198,236,242,254,249,252,254,234,247,137,203"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="345,126,396,85,428,65,463,50,514,36,555,30,596,35,646,50,675,64,700,83,740,123,736,127,697,87,672,69,644,55,595,40,555,36,515,41,465,55,431,70,399,89,348,130"/>
+<area shape="rect" id="Node000004" href="$classMOLLERData_1_1Waveform.html#a3bbcbb30598767e568e913ebce655bb2" title=" " alt="" coords="464,65,645,105"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="397,126,469,106,470,111,398,131"/>
+<area shape="rect" id="Node000005" href="$classMOLLERData_1_1Waveform.html#a96e01f621f2a6e132b3f4e3dd4531349" title=" " alt="" coords="464,129,645,169"/>
+<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="416,146,450,146,450,151,416,151"/>
+<area shape="rect" id="Node000006" href="$classMOLLERData_1_1Waveform.html#a33e19f1c95f1b50cd544bd3da9080d86" title=" " alt="" coords="464,193,645,233"/>
+<area shape="poly" id="edge8_Node000003_Node000006" title=" " alt="" coords="398,166,470,186,469,191,397,171"/>
+<area shape="rect" id="Node000007" href="$classMOLLERData_1_1Waveform.html#a47c44057c7096a8a5770f44174cf6855" title=" " alt="" coords="464,257,645,297"/>
+<area shape="poly" id="edge10_Node000003_Node000007" title=" " alt="" coords="397,166,418,178,434,195,442,211,451,227,466,242,473,248,470,252,462,247,446,230,438,214,429,198,414,183,395,171"/>
+<area shape="rect" id="Node000008" href="$classMOLLERData_1_1Waveform.html#aa83442bbfe987d62a97eeaebfaf5e8ff" title=" " alt="" coords="464,321,645,361"/>
+<area shape="poly" id="edge12_Node000003_Node000008" title=" " alt="" coords="402,166,418,179,431,195,438,212,443,244,447,276,454,291,466,307,470,311,467,315,462,310,449,294,442,277,437,245,433,213,426,198,414,182,399,171"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="620,102,704,129,702,134,618,107"/>
+<area shape="poly" id="edge7_Node000005_Node000002" title=" " alt="" coords="645,146,680,146,680,151,645,151"/>
+<area shape="poly" id="edge9_Node000006_Node000002" title=" " alt="" coords="618,190,702,163,704,168,620,195"/>
+<area shape="poly" id="edge11_Node000007_Node000002" title=" " alt="" coords="620,254,644,242,693,206,733,170,736,174,697,211,647,247,622,259"/>
+<area shape="poly" id="edge13_Node000008_Node000002" title=" " alt="" coords="625,318,644,306,677,275,704,239,742,172,747,175,709,242,681,279,647,311,627,323"/>
+</map>

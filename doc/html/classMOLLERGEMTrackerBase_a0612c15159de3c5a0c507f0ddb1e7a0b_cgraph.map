@@ -1,0 +1,17 @@
+<map id="MOLLERGEMTrackerBase::FitTrack" name="MOLLERGEMTrackerBase::FitTrack">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,91,188,131"/>
+<area shape="rect" id="Node000002" href="$classMOLLERGEMTrackerBase.html#aae25377a89ad5fdeb14deaf4f56d6d6a" title=" " alt="" coords="236,33,419,73"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="177,88,232,74,234,79,178,93"/>
+<area shape="rect" id="Node000003" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="697,98,825,123"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="188,108,683,108,683,113,188,113"/>
+<area shape="rect" id="Node000005" href="$classMOLLERGEMTrackerBase.html#a22365ef0bfecfb99e77ba00421514339" title=" " alt="" coords="236,148,419,188"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="178,128,234,142,232,147,177,133"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="385,31,441,16,509,5,580,5,616,9,650,19,678,32,703,49,742,85,738,89,699,53,675,36,648,24,615,15,580,10,509,11,442,21,386,36"/>
+<area shape="rect" id="Node000004" href="$classMOLLERGEMTrackerBase.html#ac869a1bf163aae85330073eb650e674e" title=" " alt="" coords="467,33,649,73"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="419,51,453,51,453,56,419,56"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="630,71,703,92,702,97,629,76"/>
+<area shape="poly" id="edge7_Node000005_Node000003" title=" " alt="" coords="419,156,649,127,683,121,684,127,650,132,419,161"/>
+<area shape="rect" id="Node000006" href="$classMOLLERGEMTrackerBase.html#aba544e1296fd770cffcafa03d7b0a7ff" title=" " alt="" coords="467,199,649,239"/>
+<area shape="poly" id="edge8_Node000005_Node000006" title=" " alt="" coords="419,185,454,193,453,198,418,191"/>
+<area shape="poly" id="edge9_Node000006_Node000003" title=" " alt="" coords="609,196,648,178,729,129,732,133,651,182,611,201"/>
+</map>

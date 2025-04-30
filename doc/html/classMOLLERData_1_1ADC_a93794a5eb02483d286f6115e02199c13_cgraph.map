@@ -1,0 +1,8 @@
+<map id="MOLLERData::ADC::GetAmplitude" name="MOLLERData::ADC::GetAmplitude">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,245,31"/>
+<area shape="rect" id="Node000002" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="533,5,661,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="246,15,520,15,520,21,246,21"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1ADC.html#a036e5dd3d6e3956f2a71fa715509ba06" title=" " alt="" coords="293,31,485,56"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="246,27,280,30,279,35,245,32"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="485,29,520,25,520,30,486,34"/>
+</map>

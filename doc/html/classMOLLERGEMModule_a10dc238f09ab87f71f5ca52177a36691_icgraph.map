@@ -1,0 +1,26 @@
+<map id="MOLLERGEMModule::CalcFitTime" name="MOLLERGEMModule::CalcFitTime">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1549,138,1788,163"/>
+<area shape="rect" id="Node000002" href="$classMOLLERGEMModule.html#af024f203966d844ad2ab167894506c42" title=" " alt="" coords="1245,111,1501,137"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1536,141,1501,138,1502,133,1536,136"/>
+<area shape="rect" id="Node000011" href="$classMOLLERGEMModule.html#a5d8520dbdbc9af059604ad703469fbb4" title=" " alt="" coords="1253,162,1493,187"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="1536,164,1494,168,1494,162,1536,159"/>
+<area shape="rect" id="Node000003" href="$classMOLLERGEMModule.html#a79c07418016fb0c25874f7db51b76664" title=" " alt="" coords="999,101,1185,141"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1232,125,1185,125,1185,120,1232,120"/>
+<area shape="rect" id="Node000004" href="$classMOLLERGEMModule.html#ac868aa4fa05c244ac713d5bb79b66017" title=" " alt="" coords="753,69,939,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="985,110,939,104,939,99,986,105"/>
+<area shape="rect" id="Node000010" href="$classMOLLERGEMModule.html#ab74bbea12719bf66f8f0f7f8fb3d87a6" title=" " alt="" coords="753,133,939,173"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="986,138,939,144,939,139,985,133"/>
+<area shape="rect" id="Node000005" href="$classMOLLERGEMTrackerBase.html#a448c4fc91014ebdd2cfadb73f3efc9e7" title=" " alt="" coords="523,69,705,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="739,92,705,92,705,87,739,87"/>
+<area shape="rect" id="Node000006" href="$classMOLLERGEMTrackerBase.html#a852256511dac5b5f9ee3387096c56211" title=" " alt="" coords="292,69,475,109"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="509,92,475,92,475,87,509,87"/>
+<area shape="rect" id="Node000007" href="$classMOLLERGEMSpectrometerTracker.html#a520b6d81eae9d45373444a11e8d8ffce" title=" " alt="" coords="5,5,244,45"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="288,69,205,48,207,43,289,63"/>
+<area shape="rect" id="Node000008" href="$classMOLLERGEMTrackerBase.html#ab66f8372bbe4dec1ed43454cc8949ac9" title=" " alt="" coords="33,69,216,109"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="278,101,216,101,216,95,278,96"/>
+<area shape="rect" id="Node000009" href="$classMOLLERGEMSpectrometerTracker.html#af6f774d661c3ee805d4a4d0e7fa67882" title=" " alt="" coords="5,133,244,173"/>
+<area shape="poly" id="edge9_Node000006_Node000009" title=" " alt="" coords="289,115,207,136,205,131,288,110"/>
+<area shape="poly" id="edge8_Node000008_Node000006" title=" " alt="" coords="230,78,292,78,292,83,230,83"/>
+<area shape="rect" id="Node000012" href="$classMOLLERGEMModule.html#a76e9ffbc347536c3212d41871a428c1b" title=" " alt="" coords="987,166,1197,191"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="1240,179,1197,180,1197,175,1239,174"/>
+</map>

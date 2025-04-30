@@ -1,0 +1,20 @@
+<map id="MOLLERData::Waveform::Waveform" name="MOLLERData::Waveform::Waveform">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,137,187,177"/>
+<area shape="rect" id="Node000002" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="464,145,592,170"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,135,130,109,159,78,194,49,234,27,284,9,326,3,368,8,417,27,450,48,478,75,516,131,512,134,474,79,447,52,415,32,367,14,326,8,285,15,236,32,197,53,162,82,134,112,113,138"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1Waveform.html#a3bbcbb30598767e568e913ebce655bb2" title=" " alt="" coords="235,41,416,81"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="137,135,234,91,252,84,254,89,236,96,139,140"/>
+<area shape="rect" id="Node000004" href="$classMOLLERData_1_1Waveform.html#a96e01f621f2a6e132b3f4e3dd4531349" title=" " alt="" coords="235,105,416,145"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="187,142,221,137,221,142,187,147"/>
+<area shape="rect" id="Node000005" href="$classMOLLERData_1_1Waveform.html#a33e19f1c95f1b50cd544bd3da9080d86" title=" " alt="" coords="235,169,416,209"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="187,167,221,172,221,177,187,173"/>
+<area shape="rect" id="Node000006" href="$classMOLLERData_1_1Waveform.html#a47c44057c7096a8a5770f44174cf6855" title=" " alt="" coords="235,233,416,273"/>
+<area shape="poly" id="edge8_Node000001_Node000006" title=" " alt="" coords="139,175,236,219,254,226,252,231,234,224,137,180"/>
+<area shape="rect" id="Node000007" href="$classMOLLERData_1_1Waveform.html#aa83442bbfe987d62a97eeaebfaf5e8ff" title=" " alt="" coords="235,297,416,337"/>
+<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="116,175,167,228,200,257,236,283,247,289,244,294,233,287,197,262,163,232,112,179"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="388,79,417,91,497,135,494,139,415,96,386,84"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="417,137,451,142,450,148,416,142"/>
+<area shape="poly" id="edge7_Node000005_Node000002" title=" " alt="" coords="416,172,450,167,451,172,417,178"/>
+<area shape="poly" id="edge9_Node000006_Node000002" title=" " alt="" coords="386,231,415,219,494,175,497,180,417,224,388,236"/>
+<area shape="poly" id="edge11_Node000007_Node000002" title=" " alt="" coords="394,295,415,283,444,259,470,232,509,180,514,183,474,235,447,263,417,287,396,299"/>
+</map>

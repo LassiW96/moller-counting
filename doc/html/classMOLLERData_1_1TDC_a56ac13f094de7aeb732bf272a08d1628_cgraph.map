@@ -1,0 +1,8 @@
+<map id="MOLLERData::TDC::GetLead" name="MOLLERData::TDC::GetLead">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,208,31"/>
+<area shape="rect" id="Node000002" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="495,5,623,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,15,481,15,481,21,208,21"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1TDC.html#af47aa0496cb2cc0cb569bcf1c14bd384" title=" " alt="" coords="256,31,447,56"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="208,26,243,29,242,35,208,31"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="447,29,480,25,481,30,448,34"/>
+</map>

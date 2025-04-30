@@ -1,0 +1,9 @@
+<map id="MOLLERData::ADC::SetPed" name="MOLLERData::ADC::SetPed">
+<area shape="rect" id="Node000001" title=" " alt="" coords="483,38,677,63"/>
+<area shape="rect" id="Node000002" href="$classMOLLERData_1_1ADC.html#a9768547be64372edfca322beb95de462" title=" " alt="" coords="245,13,424,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="469,42,424,37,425,32,469,37"/>
+<area shape="rect" id="Node000004" href="$classMOLLERData_1_1ADC.html#ae9fd0612a97df8159483ba0afb3e8df9" title=" " alt="" coords="235,62,435,87"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="469,64,435,68,435,62,469,59"/>
+<area shape="rect" id="Node000003" href="$classMOLLERGenericDetector.html#af32d6b69f97d968e2932937e5753bb37" title="Read MOLLERGenericDetector Database." alt="" coords="5,5,187,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="232,28,187,28,187,23,232,23"/>
+</map>

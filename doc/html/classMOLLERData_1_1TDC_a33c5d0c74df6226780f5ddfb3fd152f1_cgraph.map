@@ -1,0 +1,13 @@
+<map id="MOLLERData::TDC::TDC" name="MOLLERData::TDC::TDC">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,63,181,88"/>
+<area shape="rect" id="Node000002" href="$classMOLLERData_1_1TDC.html#a5362928c51ddcfeb6553b0ff777f44cc" title=" " alt="" coords="239,5,429,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,60,266,31,267,37,148,65"/>
+<area shape="rect" id="Node000004" href="$classMOLLERData_1_1TDC.html#a1136f29fe29fa74902d9bdfa0966e884" title=" " alt="" coords="232,55,436,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="182,73,218,73,218,78,182,78"/>
+<area shape="rect" id="Node000005" href="$classMOLLERData_1_1TDC.html#ab411a244bca10241ff3ed5093fbc692f" title=" " alt="" coords="229,120,439,145"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="148,85,267,114,266,119,147,91"/>
+<area shape="rect" id="Node000003" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="487,63,615,88"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="390,28,439,41,495,56,493,61,438,46,388,33"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="436,73,473,73,473,78,436,78"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="388,117,438,105,493,89,495,94,439,110,390,123"/>
+</map>

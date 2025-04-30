@@ -1,0 +1,7 @@
+<map id="MOLLERGEMSpectrometerTracker" name="MOLLERGEMSpectrometerTracker">
+<area shape="rect" id="Node000001" title=" " alt="" coords="59,753,326,1119"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,323,156,388"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,401,160,753,155,754,87,402"/>
+<area shape="rect" id="Node000003" href="$classMOLLERGEMTrackerBase.html" title=" " alt="" coords="180,5,429,705"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="237,719,230,754,225,753,232,718"/>
+</map>

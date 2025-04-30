@@ -1,0 +1,7 @@
+<map id="MOLLERData::Waveform::Clear" name="MOLLERData::Waveform::Clear">
+<area shape="rect" id="Node000001" title=" " alt="" coords="235,27,416,67"/>
+<area shape="rect" id="Node000002" href="$classMOLLERElement.html#a7cc9d27b43d5f368ff1300cdfb04dc1a" title=" " alt="" coords="11,5,181,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,37,181,32,182,26,221,31"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1Waveform.html#a4f377820fb173af329e9331fd58ddad2" title=" " alt="" coords="5,55,187,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="221,63,187,67,187,62,221,57"/>
+</map>

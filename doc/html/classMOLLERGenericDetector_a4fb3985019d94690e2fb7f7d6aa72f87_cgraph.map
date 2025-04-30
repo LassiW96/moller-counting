@@ -1,0 +1,9 @@
+<map id="MOLLERGenericDetector::DecodeTDC" name="MOLLERGenericDetector::DecodeTDC">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,47,187,87"/>
+<area shape="rect" id="Node000002" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="275,5,403,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="186,46,262,31,263,36,187,52"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1TDC.html#a5be47cb37a579006c0d2bfc5b5b00efa" title=" " alt="" coords="235,55,443,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,65,221,65,221,70,187,70"/>
+<area shape="rect" id="Node000004" href="$classMOLLERElement.html#a3c04988552942ec3a9d593b528256f3d" title=" " alt="" coords="257,104,421,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="187,83,263,99,262,104,186,88"/>
+</map>

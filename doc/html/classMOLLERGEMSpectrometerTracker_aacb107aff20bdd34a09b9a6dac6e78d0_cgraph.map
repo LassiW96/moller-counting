@@ -1,0 +1,20 @@
+<map id="MOLLERGEMSpectrometerTracker::Init" name="MOLLERGEMSpectrometerTracker::Init">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,231,244,271"/>
+<area shape="rect" id="Node000002" href="$classMOLLERGEMTrackerBase.html#af13ab2487adbe2554dfd6a1664cdaa0c" title=" " alt="" coords="292,137,475,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="180,228,313,180,315,185,182,233"/>
+<area shape="rect" id="Node000003" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="753,145,881,170"/>
+<area shape="poly" id="edge11_Node000001_Node000003" title=" " alt="" coords="183,268,285,297,349,309,418,319,491,323,564,319,636,307,704,283,736,263,763,236,801,181,805,184,767,239,739,267,706,288,637,312,564,325,491,328,418,324,348,315,284,302,182,273"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="397,135,418,109,446,78,482,49,522,27,572,10,615,3,657,8,707,27,739,48,767,76,805,131,801,134,763,79,736,52,704,32,656,14,615,8,573,15,524,32,485,53,450,82,422,112,401,139"/>
+<area shape="rect" id="Node000004" href="$classMOLLERGEMTrackerBase.html#a6c95a2c631e7a3d439532e4d362e1beb" title=" " alt="" coords="523,41,705,81"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="424,135,522,91,540,84,542,89,524,96,426,140"/>
+<area shape="rect" id="Node000005" href="$classMOLLERGEMTrackerBase.html#a14bf92bb2cfa05f117afc5d534028f9e" title=" " alt="" coords="523,105,705,145"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="474,142,509,137,509,143,475,147"/>
+<area shape="rect" id="Node000006" href="$classMOLLERGEMTrackerBase.html#a34d77fa3d7f511629e6601528c096ef7" title=" " alt="" coords="523,169,705,209"/>
+<area shape="poly" id="edge7_Node000002_Node000006" title=" " alt="" coords="475,167,509,172,509,177,474,173"/>
+<area shape="rect" id="Node000007" href="$classMOLLERGEMTrackerBase.html#a7f324439ff69979f98e61bfe41305ac4" title=" " alt="" coords="523,233,705,273"/>
+<area shape="poly" id="edge9_Node000002_Node000007" title=" " alt="" coords="426,175,524,219,542,226,540,231,522,224,424,180"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="677,79,706,91,786,135,784,140,704,96,675,84"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="706,137,740,143,739,148,705,142"/>
+<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="705,172,739,167,740,172,706,178"/>
+<area shape="poly" id="edge10_Node000007_Node000003" title=" " alt="" coords="675,231,704,219,784,175,786,180,706,224,677,236"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="MOLLERData::TDC::GetDataRaw" name="MOLLERData::TDC::GetDataRaw">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,236,31"/>
+<area shape="rect" id="Node000002" href="$Helper_8h.html#a0d027158d57c818f40030e23b28c7489" title=" " alt="" coords="773,31,901,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,11,463,9,595,13,726,22,760,26,759,32,725,27,594,18,463,14,236,16"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1TDC.html#a56ac13f094de7aeb732bf272a08d1628" title=" " alt="" coords="284,31,487,56"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="236,26,270,30,270,35,236,32"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="487,41,759,41,759,46,487,46"/>
+<area shape="rect" id="Node000004" href="$classMOLLERData_1_1TDC.html#af47aa0496cb2cc0cb569bcf1c14bd384" title=" " alt="" coords="535,81,725,107"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="448,54,555,76,554,81,447,59"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="682,79,771,57,772,62,684,84"/>
+</map>

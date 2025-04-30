@@ -1,0 +1,12 @@
+<map id="MOLLERElement.h" name="MOLLERElement.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="211,5,353,31"/>
+<area shape="rect" id="Node000002" href="$MOLLERElement_8cxx.html" title=" " alt="" coords="5,79,161,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,38,117,81,115,76,236,33"/>
+<area shape="rect" id="Node000003" href="$MOLLERGenericDetector_8h.html" title=" " alt="" coords="186,79,378,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="285,44,285,79,279,79,279,44"/>
+<area shape="rect" id="Node000005" href="$mollerDict_8cxx.html" title=" " alt="" coords="339,152,492,177"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="331,34,364,52,392,77,403,96,411,116,417,151,412,152,406,117,399,98,388,80,361,56,329,38"/>
+<area shape="rect" id="Node000004" href="$MOLLERGenericDetector_8cxx.html" title=" " alt="" coords="108,152,315,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="263,116,225,154,221,150,259,112"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="317,108,395,149,392,154,314,113"/>
+</map>

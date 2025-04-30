@@ -1,0 +1,9 @@
+<map id="MOLLERElement::HasData" name="MOLLERElement::HasData">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,55,199,80"/>
+<area shape="rect" id="Node000002" href="$classMOLLERData_1_1ADC.html#ada9876bcb64d622d0a6c64649d0448e6" title=" " alt="" coords="247,5,453,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="166,52,272,31,273,36,167,57"/>
+<area shape="rect" id="Node000003" href="$classMOLLERData_1_1TDC.html#a7be130d878f7168035005f2cd185b909" title=" " alt="" coords="247,55,453,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="199,65,234,65,234,70,199,70"/>
+<area shape="rect" id="Node000004" href="$classMOLLERData_1_1Waveform.html#ae94d0c6ef47424ae1c9bc9199bfa7090" title=" " alt="" coords="259,105,441,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="158,77,250,99,249,104,157,83"/>
+</map>
