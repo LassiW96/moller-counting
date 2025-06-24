@@ -1,0 +1,19 @@
+#---------------------------- DOWNSTREAM SCINTILLATOR PLANE ----------------------------------#
+Number of Scintillator paddles----------------------------------------------------------------
+        7
+Crate, Slot, 1st, Last ADC chans, Beg DS scint chan--------------------------------------------
+        0       0       0       0       0               - ADCs pads 0-0 (right) # need to update numbers
+        0       0       0       0       0               - ADCs pads 0-0 (left) # need to update numbers. also, does it require left right?
+X,Y,Z coords of DS scint front plane in spectrum cs--------------------------------------------
+        0       0       0                               - Meters
+Half of X, half of Y, full Z sizes of DS scint-------------------------------------------------
+        0       0       0                               - Meters
+Rotation angle of the DS scint plane-----------------------------------------------------------
+        0                                               - Degrees
+Pedestal values of DS scint ADC channels-------------------------------------------------------
+        0       0       0       0       0       0       - Left Paddles
+        0       0       0       0       0       0       - Right Paddles
+Amplitude transformation coefficients of DS scint ADC channels---------------------------------
+        0       0       0       0       0       0       - Left Paddles
+        0       0       0       0       0       0       - Right Paddles
+#---------------------------------------------------------------------------------------------#
