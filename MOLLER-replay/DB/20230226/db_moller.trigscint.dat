@@ -1,0 +1,54 @@
+########################################### MOLLER TriggerSscintillator-plane data ##################################################
+## Check all the numbers here
+
+## Detector map values
+moller.trigscint.detmap =
+0       0       0       0       0                                                       # Look up for these numbers
+
+## Channel map
+moller.trigscint.chanmap
+0       1       2       3       4       5       6       7                               # Look up for theese numbers
+
+## Number of rows and columns
+moller.trigscint.ncols = 0
+moller.trigscint.nrows = 0                                                              # What are the ncols and nrows?
+
+## Position of the first module                                                         # Upstream module position?
+moller.trigscint.xyz =
+0       0       0
+
+## Space between modules
+moller.trigscint.dxdydz =
+0       0       0
+
+## Positions in [m] where +z is rotated by bb.theta                                     # check what this is
+moller.trigscint.position =
+0       0       0
+
+## Size [m]                                                                             # Is this the Scintillator size?
+moller.trigscint.size =
+0       0       0
+
+## ADC channels to mV assume F250 set to 2V for 4096
+moller.trigscint.adc.conv = 0.4882
+
+## Threshold for pulse finding in waveform [mV]
+moller.trigscint.adc.thres = 5.0
+
+## Number of bins at the beginning of waveform used to determine the average pedestal
+## bin = 4ns
+moller.trigscint.adc.NPedBin = 4
+
+## Number of bins before threshold bin to use in integrating pulse
+## bin 4ns
+moller.trigscint.adc.NSB = 3
+
+## Number of bins after threshold bin to use in integrating pulse
+## bin 4ns
+moller.trigscint.adc.NSA = 12
+
+## Number of bins for fixed threshold if no threshold crossing is found                 # Look what this is
+moller.trigscint.adc.FixThresBin = 14
+
+## Convert ADC integral in pC to GeV
+moller.trigscint.adc.gain = 1.0
