@@ -37,12 +37,12 @@ using namespace Podd;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 MOLLERTriggerScintilltor::MOLLERTriggerScintillator(const char* name, const char* description,
-                            THaApparatus* apparatus )
+                            THaApparatus* apparatus)
                         : THaNonTrackingDetector(name,description,apparatus), fCn(0),
                         fAttenuation(0), fResolution(0), fFADCDatas(nullptr)
 {
     // Fill the constructor body if necessary
-    fNviews = 2; // check this out
+    fNviews = 1; // check this out
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,12 +52,12 @@ MOLLERTriggerScintillator::MOLLERTriggerScintillator()
     fAttenuation(0), fResolution(0), fFADCDatas(nullptr)
 {
     // Fill the default constructor body if necessary
-    fNviews = 2;
+    fNviews = 1;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read the Scintillators parameters from the database
-Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& data)
+Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 {
     // Read detector's parameters from the DB
     const char* const here = "ReadDatabase";
