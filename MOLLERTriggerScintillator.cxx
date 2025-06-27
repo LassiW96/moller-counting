@@ -36,8 +36,10 @@ using namespace Podd;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
-MOLLERTriggerScintilltor::MOLLERTriggerScintillator(const char* name, const char* description, THaApparatus* apparatus, PMTMode mode)
+MOLLERTriggerScintilltor::MOLLERTriggerScintillator(const char* name, const char* description,
+                                                    THaApparatus* apparatus, PMTMode mode)
                         : THaNonTrackingDetector(name, description, apparatus), 
+                        fPMTMode(mode),
                         fCn(0), fAttenuation(0), fResolution(0), 
                         fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
 {
@@ -48,7 +50,8 @@ MOLLERTriggerScintilltor::MOLLERTriggerScintillator(const char* name, const char
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Default constructor for ROOT RTTI
 MOLLERTriggerScintillator::MOLLERTriggerScintillator()
-    : THaNonTrackingDetector(), 
+    : THaNonTrackingDetector(),
+    fPMTMode(mode), 
     fCn(0), fAttenuation(0), fResolution(0), 
     fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
 {
