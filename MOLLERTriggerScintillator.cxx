@@ -36,23 +36,24 @@ using namespace Podd;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
-MOLLERTriggerScintilltor::MOLLERTriggerScintillator(const char* name, const char* description,
-                            THaApparatus* apparatus)
-                        : THaNonTrackingDetector(name,description,apparatus), fCn(0),
-                        fAttenuation(0), fResolution(0), fFADCDatas(nullptr)
+MOLLERTriggerScintilltor::MOLLERTriggerScintillator(const char* name, const char* description, THaApparatus* apparatus, PMTMode mode)
+                        : THaNonTrackingDetector(name, description, apparatus), 
+                        fCn(0), fAttenuation(0), fResolution(0), 
+                        fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
 {
-    // Fill the constructor body if necessary
-    fNviews = 1; // check this out
+    // Which mode is going to use, Sigle PMT or Dual PMT
+    fNviews = (mode == PMTMode::Double) ? 2:1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Default constructor for ROOT RTTI
 MOLLERTriggerScintillator::MOLLERTriggerScintillator()
-    : THaNonTrackingDetector(), fCn(0),
-    fAttenuation(0), fResolution(0), fFADCDatas(nullptr)
+    : THaNonTrackingDetector(), 
+    fCn(0), fAttenuation(0), fResolution(0), 
+    fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
 {
     // Fill the default constructor body if necessary
-    fNviews = 1;
+    fNviews = (mode == PMTMode::Double) ? 2:1;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
