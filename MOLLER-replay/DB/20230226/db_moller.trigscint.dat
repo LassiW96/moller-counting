@@ -1,14 +1,14 @@
 ########################################### MOLLER TriggerSscintillator-plane data ##################################################
-## Check all the numbers here
 
 ## Detector map values
 moller.trigscint.detmap =
-0       0       0       0       0                                                       # Look up for these numbers
+2   4   0   15  -1      # ROC #, fADC slot #, start channel #, end channel #
 
-## Channel map
+## Channel map (how many channels connected)
 moller.trigscint.chanmap
-0       1       2       3       4       5       6       7                               # Look up for theese numbers
+0   1   2   3  4   5   6    7   8   9   10  11  12  13  14  15
 
+## Values below are not used for now, will be used in the real experiment
 ## Number of rows and columns
 moller.trigscint.ncols = 0
 moller.trigscint.nrows = 0                                                              # What are the ncols and nrows?
