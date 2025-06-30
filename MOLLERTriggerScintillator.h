@@ -2,6 +2,7 @@
 #define MOLLERTRIGGERSCINTILLATOR_H
 
 #include "THaNonTrackingDetector.h"
+#include "DetectorData.h"
 #include "FADCData.h"
 #include <vector>
 #include <set>
@@ -13,11 +14,11 @@ public:
     enum Eside {kNone = -1, kRight = 0, kLeft = 1, kSingle = 2}; // Added kSingle in case if single PMT is used
     using Idx_t = std::pair<Eside, Int_t>;
 
-    enum class PMTMode {Single, Double};                         // Flag to determine if single PMT or Dual PMT case
-    PMTMode fPMTMode;                                            // PMTMode should be defined in either a db file or somewhere else
+    //enum class PMTMode {Single, Double};                         // Flag to determine if single PMT or Dual PMT case
+    //PMTMode fPMTMode;                                            // PMTMode should be defined in either a db file or somewhere else
 
     explicit MOLLERTriggerScintillator(const char* name, const char* description = "",
-                                THaApparatus* a = nullptr, PMTMode mode = PMTMode::Double);
+                                THaApparatus* a = nullptr);
     MOLLERTriggerScintillator();
     virtual ~MOLLERTriggerScintillator();
 

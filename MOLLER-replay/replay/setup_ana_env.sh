@@ -3,8 +3,11 @@
 ## Setup your custom database directory
 ## Use: source setup_ana_env.sh
 
-export DB_DIR=$SBS_REPLAY/DB
-export DATA_DIR=$HOME/sbs/data
-export ANALYZER_CONFIGPATH=$SBS_REPLAY/replay
-export OUT_DIR=$HOME/sbs/Rootfiles
-export LOG_DIR=/$(hostname -s)/work1/logs
+## New environment for moller counting
+export MOLLER_REPLAY=$HOME/JLab-analyzers/moller-counting
+
+export DB_DIR=$MOLLER_REPLAY/MOLLER-replay/DB
+export DATA_DIR=$HOME/JLab-analyzers/moller-counting-test/data
+export ANALYZER_CONFIGPATH=$MOLLER_REPLAY/replay
+export OUT_DIR=$HOME/JLab-analyzers/moller-counting-test/output
+export LOG_DIR=$HOME/JLab-analyzers/moller-counting-test/logs

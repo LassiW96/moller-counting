@@ -36,27 +36,25 @@ using namespace Podd;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
-MOLLERTriggerScintilltor::MOLLERTriggerScintillator(const char* name, const char* description,
-                                                    THaApparatus* apparatus, PMTMode mode)
+MOLLERTriggerScintillator::MOLLERTriggerScintillator(const char* name, const char* description,
+                                                    THaApparatus* apparatus)
                         : THaNonTrackingDetector(name, description, apparatus), 
-                        fPMTMode(mode),
                         fCn(0), fAttenuation(0), fResolution(0), 
                         fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
 {
     // Which mode is going to use, Sigle PMT or Dual PMT
-    fNviews = (mode == PMTMode::Double) ? 2:1;
+    fNviews = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Default constructor for ROOT RTTI
 MOLLERTriggerScintillator::MOLLERTriggerScintillator()
     : THaNonTrackingDetector(),
-    fPMTMode(mode), 
     fCn(0), fAttenuation(0), fResolution(0), 
     fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
 {
     // Fill the default constructor body if necessary
-    fNviews = (mode == PMTMode::Double) ? 2:1;
+    fNviews = 1;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,9 +82,9 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     vector<Int_t> detmap;
     Int_t nelem = 0;
 
-    DBRequest config_request[] = {
+    /*DBRequest config_request[] = {
 
-    };
+    };*/
 
 }
 

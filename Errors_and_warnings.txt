@@ -1,0 +1,13 @@
+moller-counting build warning - 06/30/25 while compiling the new trig scint class
+
+CMake Warning at CMakeLists.txt:211 (message):
+  MOLLER-replay not found in default location
+  /home/lasitha/JLab-analyzers/MOLLER-replay.  You can still build
+  MOLLER-offline, but the "replay" and "scripts" directories under
+  MOLLER-replay won't be automatically added to ROOT's macro path in the
+  .rootrc file.  To fix this, set environment variable MOLLER_REPLAY to point
+  to your MOLLER-replay installation and/or re-run cmake with
+  -DMOLLER_REPLAY_PATH=/path/to/your/custom/MOLLER-replay/
+
+  --ignoring this and building
+

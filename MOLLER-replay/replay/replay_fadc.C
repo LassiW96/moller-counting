@@ -7,7 +7,7 @@
 #include "THaApparatus.h"
 #include "TString.h"
 
-void replay_fadc( int runnum=770, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000 ){
+void replay_fadc( int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000 ){
     MOLLERSpectrometer *moller = new MOLLERSpectrometer("moller", "Generic apparatus");
     MOLLERGenericDetector *det = new MOLLERGenericDetector("scint", "scint");
     det->SetModeADC(MOLLERModeADC::kWaveform);
@@ -39,7 +39,7 @@ void replay_fadc( int runnum=770, int firstsegment=0, int maxsegments=1, long fi
     while( segcounter < maxsegments && segment - firstsegment < maxsegments ){
 
     TString codafilename;
-    codafilename.Form( "%s/vtp_%d.evio.%d", prefix.Data(), runnum, segment );
+    codafilename.Form( "%s/test_vtp_%d.evio.%d", prefix.Data(), runnum, segment );
 
     segmentexists = true;
     
