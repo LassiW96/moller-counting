@@ -321,6 +321,8 @@ Int_t MOLLERGenericDetector::ReadDatabase( const TDatime& date )
           Error( Here(here), "Need to modify MOLLERGenericDetector to specify whether TDC or ADC for module %d.", i);   
 	}
       }
+
+      //d->Print;
       if(!d->IsADC() && !d->IsTDC()) {
         // An unknown module was specified, complain and exit
         Error( Here(here), "Unknown module specified for module %d.", i);
