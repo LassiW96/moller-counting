@@ -36,6 +36,8 @@ void replay_moller_trigscint(int runnum=372, int firstsegment=0, int maxsegments
     // This loop adds all file segments found to the list of THaRuns to process:
     while (segcounter < maxsegments && segment - firstsegment < maxsegments) {
         
+        TString codafilename;
+        codafilename.Form("%s/test_vtp_%d.evio.%d", prefix.Data(), runnum, segment);
         /*fill the loop*/
         segment++;
     }
@@ -46,7 +48,7 @@ void replay_moller_trigscint(int runnum=372, int firstsegment=0, int maxsegments
     firstsegment = 0;
     lastsegment = 1;
     TString outfilename;
-    outfilename.Form("%s/moller_fadc_reolayed_%d_seg%d_%d.root", prefix.Data(), runnum, firstsegment, lastsegment);
+    outfilename.Form("%s/trigscint_test_replayed_%d_seg%d_%d.root", prefix.Data(), runnum, firstsegment, lastsegment);
 
     analyzer->SetVerbosity(2);
     analyzer->SetMarkInterval(100);

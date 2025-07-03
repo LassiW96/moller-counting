@@ -82,10 +82,30 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     vector<Int_t> detmap;
     Int_t nelem = 0;
 
-    /*DBRequest config_request[] = {
+    DBRequest config_request[] = {
+        { "detmap",         &detmap,        kIntV },
+        { "npaddles",       &nelem,         kInt },
+        { nullptr}
+    };
 
-    };*/
+    err = LoadDB(file, date, config_request, fPrefix);
 
+    // Sanity checks
+    if (!err && nelem <= 0) {
+        Error( Here(here), "Invalid number of paddles: %d", nelem);
+        err = kInitError;
+    }
+
+    // Prind the DB values 
+    std::cout << "MOLLERTriggerScintillator : npaddles : " << nelem << std::endl;
+    std::cout << "MOLLERTriggerScintillator : detmap : ";
+    for (size_t i = 0; i < detmap.size(); i++) {
+        std::cout << detmap[i] << " ";
+    }
+    std::cout << std::endl;
+
+    fclose(file);
+    return kOK;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

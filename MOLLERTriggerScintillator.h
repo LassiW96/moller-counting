@@ -49,6 +49,9 @@ public:
     const HitData_t&    GetHit(Int_t i) {return fHits[i];}
     const HitData_t&    GetPad(Int_t i) {return fPadData[i];}
 
+    // Making ReadDatabase method public, temporary, for debugging
+    virtual Int_t       ReadDatabase(const TDatime& date);
+
 protected:
 
     // Calibration parameters
@@ -73,7 +76,7 @@ protected:
     virtual Int_t       ApplyCorrections();
     virtual Data_t      TimeWalkCorrection(Idx_t idx, Data_t adc);
     virtual Int_t       FindPaddleHits();
-    virtual Int_t       ReadDatabase(const TDatime& date);
+    
     virtual Int_t       DefineVariables( EMode mode = kDefine );
 
     FADCData* fFADCData; // Is this neccessary?
