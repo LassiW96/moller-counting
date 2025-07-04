@@ -1,5 +1,5 @@
-#ifndef MOLLERTRIGGERSCINTILLATOR_H
-#define MOLLERTRIGGERSCINTILLATOR_H
+#ifndef MOLLERTriggerScintillator_h
+#define MOLLERTriggerScintillator_h
 
 #include "THaNonTrackingDetector.h"
 #include "DetectorData.h"
@@ -50,7 +50,7 @@ public:
     const HitData_t&    GetPad(Int_t i) {return fPadData[i];}
 
     // Making ReadDatabase method public, temporary, for debugging
-    virtual Int_t       ReadDatabase(const TDatime& date);
+    //virtual Int_t       ReadDatabase(const TDatime& date);
 
 protected:
 
@@ -60,26 +60,27 @@ protected:
     Data_t      fResolution;        // Average time resolution per PMT (s)
 
     // per-event data
-    Podd::PMTData*          fPMTs;      // Raw PMT data - in case of a single PMT
+    
     Podd::PMTData*          fRightPMTs; // Raw PMT data for right side PMTs - 2 PMT case
     Podd::PMTData*          fLeftPMTs;  // Raw PMT data for left side PMTs
+    Podd::PMTData*          fPMTs;      // Raw PMT data - in case of a single PMT
     std::set<Idx_t>         fHitIdx;    // Idices of PMTs with data
     std::vector<HitData_t>  fHits;      // Calculated hit data per hit
     // fPadData duplicates the info in fHits for direct access via paddle number
     std::vector<HitData_t>  fPadData;   // Calculated hit data per paddle
 
     virtual Int_t       StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data) override;
-    OptUInt_t           LoadData(const THaEvData& evdata,
-                                const DigitizerHitInfo_t& hitinfo) override;
+    /*OptUInt_t           LoadData(const THaEvData& evdata,
+                                const DigitizerHitInfo_t& hitinfo) override;*/
 
     virtual void        PrintDecodedData(const THaEvData& evdata) const;
     virtual Int_t       ApplyCorrections();
     virtual Data_t      TimeWalkCorrection(Idx_t idx, Data_t adc);
     virtual Int_t       FindPaddleHits();
-    
+    virtual Int_t       ReadDatabase(const TDatime& date);
     virtual Int_t       DefineVariables( EMode mode = kDefine );
 
     FADCData* fFADCData; // Is this neccessary?
-    ClassDef(MOLLERTriggerScintillator, 1)
+    ClassDef(MOLLERTriggerScintillator, 0)
 };
 #endif

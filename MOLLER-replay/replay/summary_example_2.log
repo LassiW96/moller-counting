@@ -1,0 +1,26 @@
+==== Thu Jul  3 20:11:08 2025 Started analysis, run 372
+Reading from "file:///home/lasitha/JLab-analyzers/moller-counting-test/data/test_vtp_372.evio.0"
+Event limit reached.
+==== Thu Jul  3 20:11:10 2025 Summary for run 372
+Counter summary:
+1002  events read
+1002  events decoded
+1000  physics events
+   2  other event types
+1000  physics events analyzed
+1002  events accepted
+
+Timing summary:
+Init             : Real Time =   0.65 seconds Cpu Time =   0.64 seconds
+Begin            : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+RawDecode        : Real Time =   0.32 seconds Cpu Time =   0.28 seconds
+Decode           : Real Time =   0.04 seconds Cpu Time =   0.09 seconds
+CoarseTracking   : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+CoarseReconstruct: Real Time =   0.02 seconds Cpu Time =   0.04 seconds
+Tracking         : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+Reconstruct      : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+Physics          : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+End              : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+Output           : Real Time =   0.55 seconds Cpu Time =   0.51 seconds
+Cuts             : Real Time =   0.01 seconds Cpu Time =   0.01 seconds
+Total            : Real Time =   1.63 seconds Cpu Time =   1.59 seconds

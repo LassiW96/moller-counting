@@ -1,4 +1,4 @@
-moller-counting build warning - 06/30/25 while compiling the new trig scint class
+##### moller-counting build warning - 06/30/25 while compiling the new trig scint class
 
 CMake Warning at CMakeLists.txt:211 (message):
   MOLLER-replay not found in default location
@@ -11,3 +11,209 @@ CMake Warning at CMakeLists.txt:211 (message):
 
   --ignoring this and building
 
+##### moller-counting - 07/03/25 :
+
+The analyzer was sourcing an older version of the moller-counting (which doesn't include MOLLERTriggerScintillator)
+That's why it allowed to analyze the w_m data file - it was not using the MOLLERTriggerScintillator at all. 
+
+Now, when the analyzer is compiled with the new MOLLERTriggerScintillator class,
+it won't allow to analyze the data file. Complaining about Trigger Scintillator 
+libraries.
+
+Following error :
+
+analyzer [0] .x replay_fadc.C 
+cling::DynamicLibraryManager::loadLibrary(): /home/lasitha/JLab-analyzers/moller-counting-install/lib/libmoller.so: undefined symbol: _ZN25MOLLERTriggerScintillator8StreamerER7TBuffer
+Error in <TInterpreter::TCling::AutoLoad>: failure loading library libmoller.so for MOLLERSpectrometer
+cling::DynamicLibraryManager::loadLibrary(): /home/lasitha/JLab-analyzers/moller-counting-install/lib/libmoller.so: undefined symbol: _ZN25MOLLERTriggerScintillator8StreamerER7TBuffer
+Error in <TInterpreter::TCling::AutoLoad>: failure loading library libmoller.so for MOLLERSpectrometer
+cling::DynamicLibraryManager::loadLibrary(): /home/lasitha/JLab-analyzers/moller-counting-install/lib/libmoller.so: undefined symbol: _ZN25MOLLERTriggerScintillator8StreamerER7TBuffer
+Error in <TInterpreter::TCling::AutoLoad>: failure loading library libmoller.so for MOLLERSpectrometer
+cling::DynamicLibraryManager::loadLibrary(): /home/lasitha/JLab-analyzers/moller-counting-install/lib/libmoller.so: undefined symbol: _ZN25MOLLERTriggerScintillator8StreamerER7TBuffer
+Error in <TInterpreter::TCling::AutoLoad>: failure loading library libmoller.so for MOLLERSpectrometer
+cling::DynamicLibraryManager::loadLibrary(): /home/lasitha/JLab-analyzers/moller-counting-install/lib/libmoller.so: undefined symbol: _ZN25MOLLERTriggerScintillator8StreamerER7TBuffer
+Error in <TInterpreter::TCling::AutoLoad>: failure loading library libmoller.so for MOLLERSpectrometer
+In file included from input_line_13:1:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/replay/replay_fadc.C:11:5: error: unknown type name 'MOLLERSpectrometer'
+    MOLLERSpectrometer *moller = new MOLLERSpectrometer("moller", "Generic apparatus");
+    ^
+/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/replay/replay_fadc.C:11:38: error: unknown type name 'MOLLERSpectrometer'
+    MOLLERSpectrometer *moller = new MOLLERSpectrometer("moller", "Generic apparatus");
+                                     ^
+/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/replay/replay_fadc.C:12:5: error: unknown type name 'MOLLERGenericDetector'
+    MOLLERGenericDetector *det = new MOLLERGenericDetector("scint", "scint");
+    ^
+/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/replay/replay_fadc.C:12:38: error: unknown type name 'MOLLERGenericDetector'
+    MOLLERGenericDetector *det = new MOLLERGenericDetector("scint", "scint");
+                                     ^
+/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/replay/replay_fadc.C:13:21: error: use of undeclared identifier 'MOLLERModeADC'
+    det->SetModeADC(MOLLERModeADC::kWaveform);
+                    ^
+/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/replay/replay_fadc.C:14:21: error: use of undeclared identifier 'MOLLERModeTDC'
+    det->SetModeTDC(MOLLERModeTDC::kNone);
+                    ^
+
+ *** Break *** segmentation violation
+
+Analyzer still gives some warnings when tried to compile even without the MOLLERTriggerScintillator :
+
+lasitha@lasitha-Aspire-E5-576G:~/JLab-analyzers/moller-counting/build$ cmake -DCMAKE_INSTALL_PREFIX=/home/lasitha/JLab-analyzers/moller-counting-install ..
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found Podd: /home/lasitha/JLab-analyzers/analyzer-install (found version 1.7.7)
+-- Found ROOT: /home/lasitha/root/install (found suitable version "6.35.01", minimum required is "6.00") 
+-- ROOT 6.35.01 found at 
+-- Check for sstream
+-- Check for sstream - found
+-- Configuring done (1.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/lasitha/JLab-analyzers/moller-counting/build
+lasitha@lasitha-Aspire-E5-576G:~/JLab-analyzers/moller-counting/build$ make -j 8
+[  8%] Generating mollerDict.cxx, libmoller_rdict.pcm, libmoller.rootmap
+[ 25%] Building CXX object CMakeFiles/moller.dir/MOLLERGEMTrackerBase.cxx.o
+[ 25%] Building CXX object CMakeFiles/moller.dir/MOLLERSpectrometer.cxx.o
+[ 33%] Building CXX object CMakeFiles/moller.dir/MOLLERGEMModule.cxx.o
+[ 50%] Building CXX object CMakeFiles/moller.dir/MPDModule.cxx.o
+[ 58%] Building CXX object CMakeFiles/moller.dir/MOLLERGenericDetector.cxx.o
+[ 66%] Building CXX object CMakeFiles/moller.dir/MOLLERElement.cxx.o
+[ 50%] Building CXX object CMakeFiles/moller.dir/MOLLERGEMSpectrometerTracker.cxx.o
+[ 75%] Building CXX object CMakeFiles/moller.dir/MOLLERData.cxx.o
+[ 83%] Building CXX object CMakeFiles/moller.dir/MOLLERManager.cxx.o
+[ 91%] Building CXX object CMakeFiles/moller.dir/mollerDict.cxx.o
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMTrackerBase.cxx: In member function ‘void MOLLERGEMTrackerBase::find_tracks()’:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMTrackerBase.cxx:1514:22: warning: unused variable ‘xcenterproj’ [-Wunused-variable]
+ 1514 |               double xcenterproj = fGridXmin_layer[maxlayer] + (binxproj+0.5)*fGridBinWidthX;
+      |                      ^~~~~~~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMTrackerBase.cxx:1515:22: warning: unused variable ‘ycenterproj’ [-Wunused-variable]
+ 1515 |               double ycenterproj = fGridYmin_layer[maxlayer] + (binyproj+0.5)*fGridBinWidthY;
+      |                      ^~~~~~~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMTrackerBase.cxx:1428:16: warning: unused variable ‘nbincombos’ [-Wunused-variable]
+ 1428 |           long nbincombos = binswithfreehits_layer[minlayer].size()*binswithfreehits_layer[maxlayer].size();
+      |                ^~~~~~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMTrackerBase.cxx: In member function ‘Double_t MOLLERGEMTrackerBase::CalcTrackChi2HitQuality(const std::map<int, int>&, Double_t&)’:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMTrackerBase.cxx:2939:12: warning: variable ‘ADCratio’ set but not used [-Wunused-but-set-variable]
+ 2939 |     double ADCratio = fModules[module]->fVclusters[vclidx].clusterADCsum / fModules[module]->fUclusters[uclidx].clusterADCsum;
+      |            ^~~~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMTrackerBase.cxx:2940:12: warning: unused variable ‘ADCratio_sigma’ [-Wunused-variable]
+ 2940 |     double ADCratio_sigma = fModules[module]->fADCratioSigma;
+      |            ^~~~~~~~~~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx: In member function ‘void MOLLERGEMModule::find_clusters_1D_experimental(MOLLERGEM::GEMaxis_t, Double_t, Double_t)’:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx:2820:14: warning: unused variable ‘sigma_max’ [-Wunused-variable]
+ 2820 |       double sigma_max = pedrms_strip[stripmax];
+      |              ^~~~~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx:2928:14: warning: unused variable ‘maxpos’ [-Wunused-variable]
+ 2928 |       double maxpos = (stripmax + 0.5 - 0.5*Nstrips)*pitch + offset;
+      |              ^~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx: In member function ‘void MOLLERGEMModule::find_clusters_1D(MOLLERGEM::GEMaxis_t, Double_t, Double_t)’:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx:3524:12: warning: unused variable ‘maxpos’ [-Wunused-variable]
+ 3524 |     double maxpos = (stripmax + 0.5 - 0.5*Nstrips) * pitch + offset;
+      |            ^~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx: In member function ‘double MOLLERGEMModule::GetCommonMode(UInt_t, Int_t, const mpdmap_t&, UInt_t)’:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx:5147:12: warning: unused variable ‘DBmean’ [-Wunused-variable]
+ 5147 |     double DBmean = cm_mean;
+      |            ^~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx: In member function ‘double MOLLERGEMModule::CalcFitTime(const std::vector<double>&, double)’:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx:5450:10: warning: unused variable ‘weight’ [-Wunused-variable]
+ 5450 |   double weight[fN_MPD_TIME_SAMP-1];
+      |          ^~~~~~
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx: In member function ‘void MOLLERGEMModule::CalcDeconvolutedSamples(const std::vector<double>&, std::vector<double>&)’:
+/home/lasitha/JLab-analyzers/moller-counting/MOLLERGEMModule.cxx:5909:7: warning: variable ‘isampmax’ set but not used [-Wunused-but-set-variable]
+ 5909 |   int isampmax=0;
+      |       ^~~~~~~~
+[100%] Linking CXX shared library libmoller.so
+[100%] Built target moller
+
+Following is the output without a TriggerScintillator class : 
+
+analyzer [0] .x replay_fadc.C 
+Added segment 0, CODA file name = /home/lasitha/JLab-analyzers/moller-counting-test/data/test_vtp_372.evio.0
+n segments to analyze = 1
+Initializing run object
+in THaRun::Open:  coda version 3
+Prestart at 1
+Info in <THaRunParameters::ReadDatabase>: Opened database file /home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/DB/20230226/db_run.dat
+Overwriting existing output file: /home/lasitha/JLab-analyzers/moller-counting-test/output/moller_fadc_replayed_372_seg0_1_3.root
+THaRun  "RUN_372"
+Run number:   372
+Run date:     Thu Jul  3 20:11:08 2025
+Data version: 3
+Requested event range: 0-1000
+CODA file:      /home/lasitha/JLab-analyzers/moller-counting-test/data/test_vtp_372.evio.0
+Initializing analysis objects
+Initializing moller
+Info in <THaCrateMap::init(tloc)>: Opened database file /home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/DB/20230226/db_cratemap.dat
+ Nreftdc = 0 Nrefadc = 0
+set all elements  thres = 10
+set all elements  conv = 0.2441
+set all elements  NSB = 5
+set all elements  NSA = 22
+set all elements  NPedBin = 5
+set all elements  FixThresBin = 14
+Initializing epics
+Initializing output
+
+THaOutput definitions: 
+=== Number of variables 26
+
+in THaRun::Open:  coda version 3
+Decoder: helicity disabled
+
+Starting analysis
+Info in <THaCrateMap::init(tloc)>: Opened database file /home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/DB/20230226/db_cratemap.dat
+Banks found (event 1):
+ roc  bank     pos     len
+   2     3      19    1229
+Sum                   1229
+100
+200
+300
+400
+500
+600
+700
+800
+900
+1000
+Event limit reached.
+==== Thu Jul  3 20:11:10 2025 Summary for run 372
+Counter summary:
+1002  events read
+1002  events decoded
+1000  physics events
+   2  other event types
+1000  physics events analyzed
+1002  events accepted
+
+Timing summary:
+Init             : Real Time =   0.65 seconds Cpu Time =   0.64 seconds
+Begin            : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+RawDecode        : Real Time =   0.32 seconds Cpu Time =   0.28 seconds
+Decode           : Real Time =   0.04 seconds Cpu Time =   0.09 seconds
+CoarseTracking   : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+CoarseReconstruct: Real Time =   0.02 seconds Cpu Time =   0.04 seconds
+Tracking         : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+Reconstruct      : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+Physics          : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+End              : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+Output           : Real Time =   0.55 seconds Cpu Time =   0.51 seconds
+Cuts             : Real Time =   0.01 seconds Cpu Time =   0.01 seconds
+Total            : Real Time =   1.63 seconds Cpu Time =   1.59 seconds
+analyzer [1] 
+
+##### moller-counting - 07/04/25 
+
+Make sure to use the following CMAKE_INSTALL_PREFIX=/home/lasitha/JLab-analyzers/moller-counting-install while cmake
+
+Got the analyzer working with the MOLLERTriggerScintillator
+Have to modify both CMakeLists.txt and moller_LinkDef.h
+Found a typo in the CMakeLists.txt - don't know if I accidentally made it or had it before.

@@ -1,0 +1,8 @@
+# Don't override a user's rootlogon.C. See if this works instead.
+Rint.Logon        /home/lasitha/JLab-analyzers/moller-counting-install/etc/rootlogon.C
+
+Unix.*.Root.DynamicPath:   .:lib:$(ROOTSYS)/lib
+Unix.*.Root.MacroPath:     .:/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/replay:/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/scripts:/home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/onlineGUIconfig: /home/lasitha/JLab-analyzers/moller-counting/MOLLER-replay/onlineGUIconfig/scripts:$(ROOTSYS)/macros
+
+ACLiC.IncludePaths:       -Iinclude
+

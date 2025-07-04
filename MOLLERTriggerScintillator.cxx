@@ -28,11 +28,11 @@
 using namespace std;
 using namespace Podd;
 
-#if __cplusplus >= 201402L
+/*#if __cplusplus >= 201402L
 # define MKPMTDATA(name,title,nelem) make_unique<PMTData>((name),(title),(nelem))
 #else
 # define MKPMTDATA(name,title,nelem) unique_ptr<PMTData>(new PMTData((name),(title),(nelem)))
-#endif
+#endif*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -113,6 +113,7 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
 {
     // Define global analysis variables
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +155,7 @@ Int_t MOLLERTriggerScintillator::Decode(const THaEvData& evdata)
 {
     // This was written according to TDC output data
     THaNonTrackingDetector::Decode(evdata);
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,28 +172,28 @@ Int_t MOLLERTriggerScintillator::ApplyCorrections()
 // TDC timewalk correction
 Data_t MOLLERTriggerScintillator::TimeWalkCorrection(Idx_t idx, Data_t adc)
 {
-
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Find paddles with TDC hits on both sides (likely true hits)
 Int_t MOLLERTriggerScintillator::FindPaddleHits()
 {
-
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Scintillator coarse processing
 Int_t MOLLERTriggerScintillator::CoarseProcess(TClonesArray& tracks)
 {
-
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Scintillator fine processing
 Int_t MOLLERTriggerScintillator::FineProcess(TClonesArray& tracks)
 {
-
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

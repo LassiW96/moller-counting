@@ -76,7 +76,7 @@ void replay_fadc( int runnum=372, int firstsegment=0, int maxsegments=1, long fi
   firstsegment = 0;
   lastsegment = 1;
   TString outfilename;
-  outfilename.Form( "%s/moller_fadc_replayed_%d_seg%d_%d.root", prefix.Data(), runnum,firstsegment,lastsegment);
+  outfilename.Form( "%s/moller_fadc_replayed_%d_seg%d_%d_3.root", prefix.Data(), runnum,firstsegment,lastsegment);
 
   analyzer->SetVerbosity(2);
   analyzer->SetMarkInterval(100);
@@ -87,7 +87,7 @@ void replay_fadc( int runnum=372, int firstsegment=0, int maxsegments=1, long fi
   analyzer->SetEvent( event );
   analyzer->SetOutFile( outfilename.Data() );
   // File to record cuts accounting information
-  analyzer->SetSummaryFile("summary_example.log"); // optional
+  analyzer->SetSummaryFile("summary_example_3.log"); // optional
 
   prefix = gSystem->Getenv("MOLLER_REPLAY");
   prefix += "/replay/";
