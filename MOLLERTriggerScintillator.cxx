@@ -28,19 +28,18 @@
 using namespace std;
 using namespace Podd;
 
-/*#if __cplusplus >= 201402L
+#if __cplusplus >= 201402L
 # define MKPMTDATA(name,title,nelem) make_unique<PMTData>((name),(title),(nelem))
 #else
 # define MKPMTDATA(name,title,nelem) unique_ptr<PMTData>(new PMTData((name),(title),(nelem)))
-#endif*/
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 MOLLERTriggerScintillator::MOLLERTriggerScintillator(const char* name, const char* description,
                                                     THaApparatus* apparatus)
                         : THaNonTrackingDetector(name, description, apparatus), 
-                        fCn(0), fAttenuation(0), fResolution(0), 
-                        fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
+                        fCn(0), fAttenuation(0), fResolution(0), fPMTs(nullptr)
 {
     // Which mode is going to use, Sigle PMT or Dual PMT
     fNviews = 1;
@@ -50,8 +49,7 @@ MOLLERTriggerScintillator::MOLLERTriggerScintillator(const char* name, const cha
 // Default constructor for ROOT RTTI
 MOLLERTriggerScintillator::MOLLERTriggerScintillator()
     : THaNonTrackingDetector(),
-    fCn(0), fAttenuation(0), fResolution(0), 
-    fRightPMTs(nullptr), fLeftPMTs(nullptr), fPMTs(nullptr)
+    fCn(0), fAttenuation(0), fResolution(0), fPMTs(nullptr)
 {
     // Fill the default constructor body if necessary
     fNviews = 1;
@@ -80,29 +78,42 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     enum {kModeUnset = -255, kCommonStop = 0, kCommonStart = 1};
 
     vector<Int_t> detmap;
-    Int_t nelem = 0;
+    vector<Int_t> chanmap;
+    //Int_t nelem = 0;
+    Int_t ncols = 0;
+    Int_t nrows = 0;
 
     DBRequest config_request[] = {
         { "detmap",         &detmap,        kIntV },
-        { "npaddles",       &nelem,         kInt },
-        { nullptr}
+        //{ "npaddles",       &nelem,         kInt },
+        { "chanmap",        &chanmap,       kIntV },
+        { "ncols",          &ncols,         kInt },
+        { "nrows",          &nrows,         kInt },
+        { nullptr }
     };
 
     err = LoadDB(file, date, config_request, fPrefix);
 
     // Sanity checks
-    if (!err && nelem <= 0) {
-        Error( Here(here), "Invalid number of paddles: %d", nelem);
-        err = kInitError;
+    if (!err && (ncols <= 0 || nrows <= 0)) {
+        Error( Here(here), "Illigal number of paddles and/or PMTs, " 
+        "paddles: %d, PMTs: %d", ncols, nrows);
+        fclose(file);
+        return kInitError;
     }
 
     // Prind the DB values 
-    std::cout << "MOLLERTriggerScintillator : npaddles : " << nelem << std::endl;
-    std::cout << "MOLLERTriggerScintillator : detmap : ";
+    //cout << "MOLLERTriggerScintillator : npaddles : " << nelem << endl;
+    cout << "MOLLERTriggerScintillator : detmap : ";
     for (size_t i = 0; i < detmap.size(); i++) {
-        std::cout << detmap[i] << " ";
+        cout << detmap[i] << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
+    cout << "MOLLERTriggerScintillator : chanmap : ";
+    for (size_t i = 0; i < chanmap.size(); i++) {
+        cout << chanmap[i] << " ";
+    }
+    cout << std::endl;
 
     fclose(file);
     return kOK;
@@ -133,13 +144,13 @@ void MOLLERTriggerScintillator::Clear(Option_t* opt)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Put decoded frontend data into fDetectorData
-Int_t MOLLERTriggerScintillator::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
+/*Int_t MOLLERTriggerScintillator::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
 {
     // Fill this up
     // Left/Right PMTs
 
     return 0;
-}
+}*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Print decoded data for debugging
@@ -170,10 +181,10 @@ Int_t MOLLERTriggerScintillator::ApplyCorrections()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TDC timewalk correction
-Data_t MOLLERTriggerScintillator::TimeWalkCorrection(Idx_t idx, Data_t adc)
+/*Data_t MOLLERTriggerScintillator::TimeWalkCorrection(Idx_t idx, Data_t adc)
 {
     return 0;
-}
+}*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Find paddles with TDC hits on both sides (likely true hits)
