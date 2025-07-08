@@ -60,6 +60,10 @@ MOLLERTriggerScintillator::MOLLERTriggerScintillator()
 Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 {
     // Read detector's parameters from the DB
+    // If detectors can't be added to detmap 
+    // or entry for Trigger Scintillators is missing        -> kInitError
+    // Success                                              -> kOK
+
     const char* const here = "ReadDatabase";
 
     VarType kDataType  = std::is_same<Data_t, Float_t>::value ? kFloat  : kDouble;
@@ -141,16 +145,6 @@ void MOLLERTriggerScintillator::Clear(Option_t* opt)
     THaNonTrackingDetector::Clear(opt);
     // Fill this up
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Put decoded frontend data into fDetectorData
-/*Int_t MOLLERTriggerScintillator::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
-{
-    // Fill this up
-    // Left/Right PMTs
-
-    return 0;
-}*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Print decoded data for debugging
