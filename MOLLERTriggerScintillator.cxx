@@ -83,22 +83,23 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 
     vector<Int_t> detmap;
     vector<Int_t> chanmap;
-    //Int_t nelem = 0;
+    Int_t model_in_detmap = 0;
     Int_t ncols = 0;
     Int_t nrows = 0;
 
     DBRequest config_request[] = {
-        { "detmap",         &detmap,        kIntV },
-        //{ "npaddles",       &nelem,         kInt },
-        { "chanmap",        &chanmap,       kIntV },
-        { "ncols",          &ncols,         kInt },
-        { "nrows",          &nrows,         kInt },
+        { "detmap",             &detmap,            kIntV },
+        { "model_in_detmap",    &model_in_detmap,   kInt,   0,  true},
+        { "chanmap",            &chanmap,           kIntV },
+        { "ncols",              &ncols,             kInt },
+        { "nrows",              &nrows,             kInt },
         { nullptr }
     };
 
     err = LoadDB(file, date, config_request, fPrefix);
 
     // Sanity checks
+    // Going to use columns as the number of paddles and rows as number of PMTs
     if (!err && (ncols <= 0 || nrows <= 0)) {
         Error( Here(here), "Illigal number of paddles and/or PMTs, " 
         "paddles: %d, PMTs: %d", ncols, nrows);
@@ -106,18 +107,36 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
         return kInitError;
     }
 
-    // Prind the DB values 
-    //cout << "MOLLERTriggerScintillator : npaddles : " << nelem << endl;
-    cout << "MOLLERTriggerScintillator : detmap : ";
-    for (size_t i = 0; i < detmap.size(); i++) {
-        cout << detmap[i] << " ";
+    // Reinitialization
+    if (!err) {
+        if (fIsInit && ncols != fNelem) {
+            // Assume ncols as the number of paddles
+            Error(Here(here), "Cannot re-initialize with different number of paddles. "
+        "(was: %d, now: %d). Detector not re-initialized.", fNelem, ncols);
+        err = kInitError;
+        } else
+        fNelem = ncols;
     }
-    cout << endl;
-    cout << "MOLLERTriggerScintillator : chanmap : ";
-    for (size_t i = 0; i < chanmap.size(); i++) {
-        cout << chanmap[i] << " ";
+
+    // kFillLogicalChannel:     Logical channel number for start channel
+    // kFillModel:              Module's hardware model number 
+    // kFillRefIndex:           Specify reference index/channel
+    // see THaDetMap::Fill for further comments
+
+    //UInt_t flags = THaDetMap::kFillLogicalChannel | THaDetMap::kFillModel; // According to THaScintillator
+    UInt_t flags = THaDetMap::kFillRefIndex; // According to Generic detector
+    if(model_in_detmap) {
+        flags |= THaDetMap::kFillModel;
     }
-    cout << std::endl;
+    
+    if (!err && FillDetMap(detmap, flags, here) <= 0) {
+        err = kInitError;
+    }
+
+    cout << "Value of flags: " << flags << endl;
+
+    Int_t test = fDetMap->Fill(detmap, flags);
+    cout << "Value of ret: " << test << endl;
 
     fclose(file);
     return kOK;
