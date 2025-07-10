@@ -128,7 +128,6 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     if(model_in_detmap) {
         flags |= THaDetMap::kFillModel;
     }
-    
     if (!err && FillDetMap(detmap, flags, here) <= 0) {
         err = kInitError;
     }
@@ -137,6 +136,18 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 
     Int_t test = fDetMap->Fill(detmap, flags);
     cout << "Value of ret: " << test << endl;
+
+    UInt_t nval = fNelem; // Variable to store total number of channels
+    if (!err) {
+        UInt_t tot_nchan = fDetMap->GetTotNumChan();
+        if (tot_nchan != 2 * nval) {
+            // This number should be changed according to the number of PMTs per detector
+            Error(Here(here), "Number of detector map channels (%u) "
+                              "inconsistent with 2 * number of paddles (%d)",
+                            tot_nchan, 2 * fNelem);
+            err = kInitError;
+        }
+    }
 
     fclose(file);
     return kOK;
@@ -147,7 +158,46 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
 {
     // Define global analysis variables
-    return 0;
+    // Copying from THaScintillator
+    // Add variables for raw PMT data
+    class VarDefInfo {
+    public:
+        PMTData* pmtData;
+        const char* key_prefix;
+        const char* comment_subst;
+        Int_t DefineVariables(EMode mode) const
+        {return pmtData->DefineVariables(mode, key_prefix, comment_subst);}
+    };
+    if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
+        return ret;
+
+    // Define variables on the remaining event data
+    // copied from THaScintillator for now - needs to be changed accordingly
+    RVarDef vars[] = {
+    { "nthit",  "Number of paddles with L&R TDCs",   "GetNHits()" },
+    { "t_pads", "Paddles with L&R coincidence TDCs", "fHits.pad" },
+    { "y_t",    "y-position from timing (m)",        "fPadData.yt" },
+    { "y_adc",  "y-position from amplitudes (m)",    "fPadData.ya" },
+    { "time",   "Time of hit at plane (s)",          "fPadData.time" },
+    { "dtime",  "Est. uncertainty of time (s)",      "fPadData.dtime" },
+    { "dedx",   "dEdX-like deposited in paddle",     "fPadData.ampl" },
+    { "hit.y_t","y-position from timing (m)",        "fHits.yt" },
+    { "hit.y_adc", "y-position from amplitudes (m)", "fHits.ya" },
+    { "hit.time",  "Time of hit at plane (s)",       "fHits.time" },
+    { "hit.dtime", "Est. uncertainty of time (s)",   "fHits.dtime" },
+    { "hit.dedx"  ,"dEdX-like deposited in paddle",  "fHits.ampl" },
+    { "trdx",   "track deviation in x-position (m)", "fTrackProj.THaTrackProj.fdX" },
+    { "trpad",  "paddle-hit associated with track",  "fTrackProj.THaTrackProj.fChannel" },
+    { nullptr }
+    };
+    Int_t ret = DefineVarsFromList( vars, mode );
+    if( ret )
+    return ret;
+
+    // Define general detector variables (track crossing coordinates etc.)
+    // Objects in fDetectorData whose variables are not yet set up will be set up
+    // as well. Our PMTData have already been initialized above & will be skipped.
+    return THaNonTrackingDetector::DefineVariables(mode);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

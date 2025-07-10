@@ -36,7 +36,8 @@ protected:
 
     // per-event data
     
-    FADCData*               fPMTs;      // An array for the number of PMTs - from fadc data
+    // PMTData - how to change into FADCdata
+    Podd::PMTData*               fPMTs;      // An array for the number of PMTs - from fadc data
     std::set<Idx_t>         fHitIdx;    // Idices of PMTs with data
     
     virtual void        PrintDecodedData(const THaEvData& evdata) const;
