@@ -7,6 +7,7 @@
 #pragma link C++ nestedclass;
 #pragma link C++ nestedtypedef;
 #pragma link C++ namespace Decoder;
+#pragma link C++ namespace HallA;
 
 #pragma link C++ class Decoder::MPDModule+;
 #pragma link C++ class MOLLERGEMTrackerBase+;
@@ -14,7 +15,7 @@
 #pragma link C++ class MOLLERSpectrometer+;
 #pragma link C++ class MOLLERGEMSpectrometerTracker+;
 #pragma link C++ class MOLLERGenericDetector+;
-#pragma link C++ class MOLLERTriggerScintillator+;
+#pragma link C++ class HallA::MOLLERTriggerScintillator+;
 #pragma link C++ class MOLLERElement+;
 #pragma link C++ class MOLLERData+;
 #pragma link C++ class MOLLERManager+;

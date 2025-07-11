@@ -1,5 +1,5 @@
-#ifndef MOLLERTriggerScintillator_h
-#define MOLLERTriggerScintillator_h
+#ifndef HallA_MOLLERTriggerScintillator_h
+#define HallA_MOLLERTriggerScintillator_h
 
 #include "THaNonTrackingDetector.h"
 #include "DetectorData.h"
@@ -7,6 +7,7 @@
 #include <vector>
 #include <set>
 
+namespace HallA {
 class FADCData;
 class TCloanesArray;
 class MOLLERTriggerScintillator : public THaNonTrackingDetector {
@@ -37,7 +38,7 @@ protected:
     // per-event data
     
     // PMTData - how to change into FADCdata
-    Podd::PMTData*               fPMTs;      // An array for the number of PMTs - from fadc data
+    FADCData*               fPMTs;      // An array for the number of PMTs - from fadc data (how to declair an array of unknown length)
     std::set<Idx_t>         fHitIdx;    // Idices of PMTs with data
     
     virtual void        PrintDecodedData(const THaEvData& evdata) const;
@@ -46,6 +47,9 @@ protected:
     virtual Int_t       ReadDatabase(const TDatime& date);
     virtual Int_t       DefineVariables( EMode mode = kDefine );
 
-    ClassDef(MOLLERTriggerScintillator, 0)
+    ClassDef(MOLLERTriggerScintillator, 1)
 };
+
+}
+
 #endif

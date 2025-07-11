@@ -12,6 +12,7 @@
 #include "THaApparatus.h"
 
 using namespace std;
+using namespace HallA;
 
 void replay_test_trigscint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
     // Create an apparatus and add your detector to it

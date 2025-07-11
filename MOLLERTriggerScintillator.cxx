@@ -17,6 +17,7 @@
 #include "THaTrack.h"
 #include "TClonesArray.h"
 #include "TMath.h"
+#include "FADCData.h"
 
 #include <iostream>
 #include <cassert>
@@ -26,13 +27,7 @@
 #include <memory>
 
 using namespace std;
-using namespace Podd;
-
-#if __cplusplus >= 201402L
-# define MKPMTDATA(name,title,nelem) make_unique<PMTData>((name),(title),(nelem))
-#else
-# define MKPMTDATA(name,title,nelem) unique_ptr<PMTData>(new PMTData((name),(title),(nelem)))
-#endif
+namespace HallA {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -149,7 +144,41 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
         }
     }
 
-    fclose(file);
+    // Modifying line 153 - 161 in THaScintillator
+    UInt_t nmodules = fDetMap->GetSize();
+    for (UInt_t i = 0; i < nmodules; i++) {
+        THaDetMap::Module* d = fDetMap->GetModule(i);
+        if (!d->model) {
+            // Model number of the module
+            d->MakeADC();
+            // Skipping TDC mode
+        }
+    }
+
+    if (err) {
+        fclose(file);
+        return err;
+    }
+
+    // Set up storage for detector per event data
+    // No need to loop over kRight and kLeft 
+    fDetectorData.clear();
+    auto ret = MakeFADCData(date, this);
+    if (ret.second)
+        return ret.second; // Database error
+
+    fPMTs = ret.first.get();
+
+    fDetectorData.emplace_back(move(ret.first));
+
+    //fPadData.resize(nval);
+    //fHits.reserve(nval);
+
+    // Calibration
+
+    // Debug
+
+    fIsInit = true;
     return kOK;
 }
 
@@ -162,7 +191,7 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
     // Add variables for raw PMT data
     class VarDefInfo {
     public:
-        PMTData* pmtData;
+        FADCData* pmtData;
         const char* key_prefix;
         const char* comment_subst;
         Int_t DefineVariables(EMode mode) const
@@ -270,5 +299,6 @@ Int_t MOLLERTriggerScintillator::FineProcess(TClonesArray& tracks)
     return 0;
 }
 
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-ClassImp(MOLLERTriggerScintillator)
+ClassImp(HallA::MOLLERTriggerScintillator)
