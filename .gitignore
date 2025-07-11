@@ -2,3 +2,4 @@ build
 install
 Errors_and_warnings.txt
 logs.txt
+rebuild_moller_counting.sh
