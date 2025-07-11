@@ -149,7 +149,34 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
         }
     }
 
-    fclose(file);
+    UInt_t nmodules = fDetMap->GetSize();
+    for (UInt_t i = 0; i < nmodules; i++) {
+        THaDetMap::Module* d = fDetMap->GetModule(i);
+        if (!d->model) d->MakeADC();
+    }
+
+    if (err) {
+        fclose(file);
+        return err;
+    }
+
+    // Set up storage for basic detector data
+    // Copying from THaScintillator, skippin L/R PMT parts
+    fDetectorData.clear();
+    auto detdata = MKPMTDATA(GetPrefixName(), fTitle, nval);
+    fPMTs = detdata.get();
+    assert(fPMTs->GetSize() - nval == 0);
+    fDetectorData.emplace_back(std::move(detdata));
+
+    // Hit data, commenting for now
+    //fPadData.resize(nval);
+    //fHits.reserve(nval);
+
+    // Calibration
+
+    // Debug para
+
+    fIsInit = true;
     return kOK;
 }
 
