@@ -17,15 +17,15 @@ using namespace HallA;
 void replay_test_trigscint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
     // Create an apparatus and add your detector to it
     // THaApparatus* testApp = new THaApparatus("TestApp");
-    //MOLLERSpectrometer *moller = new MOLLERSpectrometer ("moller", "Generic apparatus");
+    MOLLERSpectrometer *moller = new MOLLERSpectrometer ("moller", "Generic apparatus");
     MOLLERTriggerScintillator* trigscint = new MOLLERTriggerScintillator("scint", "scint");
     
-    //moller->AddDetector(trigscint);
+    moller->AddDetector(trigscint);
 
     // Register the apparatus with the analyzer framework
     THaAnalyzer *analyzer = new THaAnalyzer;
 
-    gHaApps->Add(trigscint);
+    gHaApps->Add(moller);
 
     THaEvent* event = new THaEvent;
     

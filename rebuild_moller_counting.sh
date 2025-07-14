@@ -28,4 +28,7 @@ echo "📗 Sourcing environment setup..."
 source "$INSTALL_DIR/bin/mollerenv.sh"
 source "$SRC_DIR/MOLLER-replay/replay/setup_ana_env.sh"
 
+echo "📚 Copying .rootrc from install to replay directory..."
+cp "${INSTALL_DIR}/run_replay_here/.rootrc" "${SRC_DIR}/MOLLER-replay/replay"
+
 echo "✅ Done! MOLLER analyzer rebuilt and environment sourced."

@@ -173,7 +173,7 @@ build_root_dictionary(${PROJECT_NAME} ${headers}
 set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " ${MOLLER_LINKFLAGS}")
 
 
-target_link_libraries(${PROJECT_NAME} ${ROOT_LIBRARIES} Podd::Podd)
+target_link_libraries(${PROJECT_NAME} ${ROOT_LIBRARIES} Podd::Podd Podd::HallA)
 
 foreach(_def ${MOLLEREXTRADEF_LIST})
   if(${${_def}})

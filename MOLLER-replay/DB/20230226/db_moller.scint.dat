@@ -7,7 +7,7 @@ moller.scint.detmap =
 2   5   0   15  -1
 
 ## Number of paddles
-##moller.scint.npaddles = 7
+moller.scint.NPED = 1
 
 moller.scint.chanmap =
 0   1   2   3  4   5   6    7   8   9   10  11  12  13  14  15
@@ -48,17 +48,23 @@ moller.scint.adc.NPedBin = 5
 
 ## Number of bins before threshold bin to use in integrating pulse
 ## bin 4ns
-moller.scint.adc.NSB = 5
+moller.scint.NSB = 5
 
 ## Number of bins after threshold bin to use in integrating pulse
 ## bin 4ns
-moller.scint.adc.NSA = 22
+moller.scint.NSA = 22
 
 ## Number of bins for fixed threshold if no threshold crossing is found    # Look what this is
 moller.scint.adc.FixThresBin = 14
 
 ## Convert ADC integral in pC to GeV
 moller.scint.adc.gain = 1.0
+
+moller.scint.Win = 1
+
+moller.scint.TFlag = 1
+
+moller.scint.TDCScale = 1
 
 
 

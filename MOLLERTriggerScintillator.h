@@ -1,5 +1,5 @@
-#ifndef HallA_MOLLERTriggerScintillator_h
-#define HallA_MOLLERTriggerScintillator_h
+#ifndef MOLLERTriggerScintillator_h
+#define MOLLERTriggerScintillator_h
 
 #include "THaNonTrackingDetector.h"
 #include "DetectorData.h"
@@ -8,6 +8,7 @@
 #include <set>
 
 namespace HallA {
+    
 class FADCData;
 class TCloanesArray;
 class MOLLERTriggerScintillator : public THaNonTrackingDetector {

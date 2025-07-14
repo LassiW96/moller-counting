@@ -16,7 +16,10 @@
 #include "Helper.h"
 #include "THaTrack.h"
 #include "TClonesArray.h"
+#include "TDatime.h"
 #include "TMath.h"
+#include "MOLLERManager.h"
+#include "THaCrateMap.h"
 #include "FADCData.h"
 
 #include <iostream>
@@ -187,7 +190,7 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
 {
     // Define global analysis variables
-    // Copying from THaScintillator
+    // Modified to include FADCData
     // Add variables for raw PMT data
     class VarDefInfo {
     public:
@@ -195,14 +198,14 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
         const char* key_prefix;
         const char* comment_subst;
         Int_t DefineVariables(EMode mode) const
-        {return pmtData->DefineVariables(mode, key_prefix, comment_subst);}
+        {return pmtData->DefineVariables(mode, key_prefix, comment_subst);} // FADCData::DefineVariables function is called here
     };
-    if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
-        return ret;
+    /*if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
+        return ret;*/
 
     // Define variables on the remaining event data
     // copied from THaScintillator for now - needs to be changed accordingly
-    RVarDef vars[] = {
+    /*RVarDef vars[] = {
     { "nthit",  "Number of paddles with L&R TDCs",   "GetNHits()" },
     { "t_pads", "Paddles with L&R coincidence TDCs", "fHits.pad" },
     { "y_t",    "y-position from timing (m)",        "fPadData.yt" },
@@ -221,7 +224,7 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
     };
     Int_t ret = DefineVarsFromList( vars, mode );
     if( ret )
-    return ret;
+    return ret;*/
 
     // Define general detector variables (track crossing coordinates etc.)
     // Objects in fDetectorData whose variables are not yet set up will be set up
