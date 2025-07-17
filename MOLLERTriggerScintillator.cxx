@@ -130,10 +130,7 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
         err = kInitError;
     }
 
-    cout << "Value of flags: " << flags << endl;
-
-    Int_t test = fDetMap->Fill(detmap, flags);
-    cout << "Value of ret: " << test << endl;
+    cout << "In ReadDatabase function" << endl;
 
     UInt_t nval = fNelem; // Variable to store total number of channels
     if (!err) {
@@ -200,9 +197,10 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
         Int_t DefineVariables(EMode mode) const
         {return pmtData->DefineVariables(mode, key_prefix, comment_subst);} // FADCData::DefineVariables function is called here
     };
-    /*if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
-        return ret;*/
+    if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
+        return ret;
 
+    cout << "In DefineVariables function" << endl;
     // Define variables on the remaining event data
     // copied from THaScintillator for now - needs to be changed accordingly
     /*RVarDef vars[] = {
@@ -243,55 +241,60 @@ MOLLERTriggerScintillator::~MOLLERTriggerScintillator()
 // Reset per-event data
 void MOLLERTriggerScintillator::Clear(Option_t* opt)
 {
+    // Reset per event data
+    cout << "In Clear function" << endl;
+
     THaNonTrackingDetector::Clear(opt);
-    // Fill this up
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Load data 
+OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
+    const DigitizerHitInfo_t& hitinfo )
+{
+// Callback from Decoder for loading the data for the 'hitinfo' channel.
+// This routine supports FADC modules and returns the pulse amplitude integral.
+// Additional info is retrieved from the FADC modules in StoreHit later.
+
+if( hitinfo.type == Decoder::ChannelType::kMultiFunctionADC ) return FADCData::LoadFADCData(hitinfo);
+
+cout << "In LoadData function" << endl;
+
+return THaNonTrackingDetector::LoadData(evdata, hitinfo);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Store Hit
+Int_t MOLLERTriggerScintillator::StoreHit( const DigitizerHitInfo_t& hitinfo, UInt_t data )
+{
+  // Put decoded frontend data into fDetectorData. Called from Decode().
+  // Data decoding is also done here - from FADCData
+  // Call StoreHit for the FADC modules first to get updated pedestals
+  FADCData* fadcData = fPMTs;
+  fadcData->StoreHit(hitinfo, data);
+
+  cout << "In StoreHit function" << endl;
+
+  // Retrieve pedestal, if available, and update the PMTData calibrations
+  // Just added the function
+
+  // Now fill the PMTData in fDetectorData
+  return 0;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Print decoded data for debugging
 void MOLLERTriggerScintillator::PrintDecodedData(const THaEvData& evdata) const
 {
     // Fill this up
     // Left/Right PMTs
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Decode Scintillator data
-Int_t MOLLERTriggerScintillator::Decode(const THaEvData& evdata)
-{
-    // This was written according to TDC output data
-    THaNonTrackingDetector::Decode(evdata);
-    return 0;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ADC/TDC corrections which are possible without tracking
-Int_t MOLLERTriggerScintillator::ApplyCorrections()
-{
-    // Fill this up
-    // Left/Right PMTs
-
-    return 0;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TDC timewalk correction
-/*Data_t MOLLERTriggerScintillator::TimeWalkCorrection(Idx_t idx, Data_t adc)
-{
-    return 0;
-}*/
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Find paddles with TDC hits on both sides (likely true hits)
-Int_t MOLLERTriggerScintillator::FindPaddleHits()
-{
-    return 0;
+    cout << "In PrintDecodedData function" << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Scintillator coarse processing
 Int_t MOLLERTriggerScintillator::CoarseProcess(TClonesArray& tracks)
 {
+    cout << "In CoarseProcessing" << endl;
     return 0;
 }
 
@@ -299,6 +302,7 @@ Int_t MOLLERTriggerScintillator::CoarseProcess(TClonesArray& tracks)
 // Scintillator fine processing
 Int_t MOLLERTriggerScintillator::FineProcess(TClonesArray& tracks)
 {
+    cout << "In FineProcessing" << endl;
     return 0;
 }
 

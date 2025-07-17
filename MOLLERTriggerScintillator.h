@@ -25,12 +25,14 @@ public:
     virtual ~MOLLERTriggerScintillator();
 
     virtual void        Clear(Option_t* opt="");
-    virtual Int_t       Decode(const THaEvData&);
     virtual Int_t       CoarseProcess(TClonesArray& tracks);
     virtual Int_t       FineProcess(TClonesArray& tracks);
 
 protected:
-
+    Int_t    StoreHit( const DigitizerHitInfo_t& hitinfo, UInt_t data ) override;
+    OptUInt_t LoadData( const THaEvData& evdata,
+        const DigitizerHitInfo_t& hitinfo ) override;
+    
     // Calibration parameters
     Data_t      fCn;                // Speed of light in the material (m/s)
     Data_t      fAttenuation;       // Attenuation length of the material (1/m)
@@ -43,8 +45,6 @@ protected:
     std::set<Idx_t>         fHitIdx;    // Idices of PMTs with data
     
     virtual void        PrintDecodedData(const THaEvData& evdata) const;
-    virtual Int_t       ApplyCorrections();
-    virtual Int_t       FindPaddleHits();
     virtual Int_t       ReadDatabase(const TDatime& date);
     virtual Int_t       DefineVariables( EMode mode = kDefine );
 

@@ -76,7 +76,7 @@ void replay_fadc( int runnum=372, int firstsegment=0, int maxsegments=1, long fi
   firstsegment = 0;
   lastsegment = 1;
   TString outfilename;
-  outfilename.Form( "%s/moller_fadc_replayed_%d_seg%d_%d_3.root", prefix.Data(), runnum,firstsegment,lastsegment);
+  outfilename.Form( "%s/moller_fadc_replayed_%d_seg%d_%d_4.root", prefix.Data(), runnum,firstsegment,lastsegment);
 
   analyzer->SetVerbosity(2);
   analyzer->SetMarkInterval(100);
