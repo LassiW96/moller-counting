@@ -62,7 +62,7 @@ moller.scint.adc.FixThresBin = 14
 moller.scint.adc.gain = 1.0
 
 ## Threshold flag
-moller.scint.TFlag = 1
+moller.scint.TFlag = 2
 
 ## TDC scalling factor, not using this, without this it puts out an error
 moller.scint.TDCScale = 1

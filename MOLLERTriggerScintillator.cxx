@@ -130,7 +130,7 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
         err = kInitError;
     }
 
-    cout << "In ReadDatabase function" << endl;
+    //cout << "In ReadDatabase function" << endl;
 
     UInt_t nval = fNelem; // Variable to store total number of channels
     if (!err) {
@@ -188,6 +188,10 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
 {
     // Define global analysis variables
     // Modified to include FADCData
+    // Clear existing variables if redefining
+    if (mode == kDefine && fIsInit) return kOK;
+    fIsSetup = (mode == kDefine);
+
     // Add variables for raw PMT data
     class VarDefInfo {
     public:
@@ -200,29 +204,59 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
     if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
         return ret;
 
-    cout << "In DefineVariables function" << endl;
-    // Define variables on the remaining event data
-    // copied from THaScintillator for now - needs to be changed accordingly
+    //cout << "In DefineVariables function" << endl;
+        // Example variables - make sure these exist as data members!
     /*RVarDef vars[] = {
-    { "nthit",  "Number of paddles with L&R TDCs",   "GetNHits()" },
-    { "t_pads", "Paddles with L&R coincidence TDCs", "fHits.pad" },
-    { "y_t",    "y-position from timing (m)",        "fPadData.yt" },
-    { "y_adc",  "y-position from amplitudes (m)",    "fPadData.ya" },
-    { "time",   "Time of hit at plane (s)",          "fPadData.time" },
-    { "dtime",  "Est. uncertainty of time (s)",      "fPadData.dtime" },
-    { "dedx",   "dEdX-like deposited in paddle",     "fPadData.ampl" },
-    { "hit.y_t","y-position from timing (m)",        "fHits.yt" },
-    { "hit.y_adc", "y-position from amplitudes (m)", "fHits.ya" },
-    { "hit.time",  "Time of hit at plane (s)",       "fHits.time" },
-    { "hit.dtime", "Est. uncertainty of time (s)",   "fHits.dtime" },
-    { "hit.dedx"  ,"dEdX-like deposited in paddle",  "fHits.ampl" },
-    { "trdx",   "track deviation in x-position (m)", "fTrackProj.THaTrackProj.fdX" },
-    { "trpad",  "paddle-hit associated with track",  "fTrackProj.THaTrackProj.fChannel" },
+        { "nhits", "Nhits",  "fNhits" },
+        { "nrefhits", "Number of reference time hits",  "fNRefhits" },
+        { "ngoodTDChits", "NGoodTDChits",  "fNGoodTDChits" },
+        { "ngoodADChits", "NGoodADChits",  "fNGoodADChits" },
+        { 0 }
+      };
+
+    DefineVarsFromList(vars, mode);
+
+    return 0;*/
+    
+    // Define detector-level analysis variables
+    /*RVarDef vars[] = {
+    { "adcrow",     "Row for block in data vectors",        "fGood.ADCrow" },
+    { "adccol",     "Col for block in data vectors",        "fGood.ADCcol" },
+    { "adcelemID",  "Element ID for block in data vectors", "fGood.ADCelemID" },
+    { "adclayer",   "Layer for block in data vectors",      "fGood.ADClayer" },
+    { "ped",        "Pedestal for block in data vectors",   "fGood.ped" },
+    { "a",          "ADC integral",                         "fGood.a" },
+    { "a_mult",     "ADC # hits in channel",                "fGood.a_mult" },
+    { "a_p",        "ADC integral - ped",                   "fGood.a_p" },
+    { "a_c",        "(ADC integral - ped)*gain",            "fGood.a_c" },
     { nullptr }
     };
-    Int_t ret = DefineVarsFromList( vars, mode );
-    if( ret )
-    return ret;*/
+
+    if (Int_t ret = DefineVarsFromList(vars, mode))
+        return ret;
+
+    RVarDef advanced_adc[] = {
+        { "a_amp",       "ADC pulse amplitude",                 "fGood.a_amp" },
+        { "a_amp_p",     "ADC pulse amplitude -ped",            "fGood.a_amp_p" },
+        { "a_amp_c",     "(ADC amp - ped)*gain*AmpToIntRatio",  "fGood.a_amp_p" },
+        { "a_amptrig_p", "(ADC amp - ped)*AmpToIntRatio",       "fGood.a_amp_p" },
+        { "a_amptrig_c", "(ADC amp - ped)*gain*AmpToIntRatio",  "fGood.a_amp_p" },
+        { "a_time",      "ADC pulse time",                      "fGood.a_time" },
+        { nullptr }
+        };
+
+    if (Int_t ret = DefineVarsFromList(advanced_adc, mode))
+        return ret;
+
+    RVarDef raw_hits[] = {
+        { "hits.a",        "All ADC integrals",   "fRaw.a" },
+        { "hits.a_amp",    "All ADC amplitudes",  "fRaw.a_amp" },
+        { "hits.a_time",   "All ADC pulse times", "fRaw.a_time" },
+        { nullptr }
+        };
+        
+    if (Int_t ret = DefineVarsFromList(raw_hits, mode))
+        return ret;*/
 
     // Define general detector variables (track crossing coordinates etc.)
     // Objects in fDetectorData whose variables are not yet set up will be set up
@@ -242,7 +276,7 @@ MOLLERTriggerScintillator::~MOLLERTriggerScintillator()
 void MOLLERTriggerScintillator::Clear(Option_t* opt)
 {
     // Reset per event data
-    cout << "In Clear function" << endl;
+    //cout << "In Clear function" << endl;
 
     THaNonTrackingDetector::Clear(opt);
 }
@@ -258,7 +292,7 @@ OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
 
 if( hitinfo.type == Decoder::ChannelType::kMultiFunctionADC ) return FADCData::LoadFADCData(hitinfo);
 
-cout << "In LoadData function" << endl;
+//cout << "In LoadData function" << endl;
 
 return THaNonTrackingDetector::LoadData(evdata, hitinfo);
 }
@@ -273,7 +307,7 @@ Int_t MOLLERTriggerScintillator::StoreHit( const DigitizerHitInfo_t& hitinfo, UI
   FADCData* fadcData = fPMTs;
   fadcData->StoreHit(hitinfo, data);
 
-  cout << "In StoreHit function" << endl;
+  //cout << "In StoreHit function" << endl;
 
   // Retrieve pedestal, if available, and update the PMTData calibrations
   // Just added the function
@@ -287,14 +321,14 @@ void MOLLERTriggerScintillator::PrintDecodedData(const THaEvData& evdata) const
 {
     // Fill this up
     // Left/Right PMTs
-    cout << "In PrintDecodedData function" << endl;
+    //cout << "In PrintDecodedData function" << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Scintillator coarse processing
 Int_t MOLLERTriggerScintillator::CoarseProcess(TClonesArray& tracks)
 {
-    cout << "In CoarseProcessing" << endl;
+    //cout << "In CoarseProcessing" << endl;
     return 0;
 }
 
@@ -302,7 +336,7 @@ Int_t MOLLERTriggerScintillator::CoarseProcess(TClonesArray& tracks)
 // Scintillator fine processing
 Int_t MOLLERTriggerScintillator::FineProcess(TClonesArray& tracks)
 {
-    cout << "In FineProcessing" << endl;
+    //cout << "In FineProcessing" << endl;
     return 0;
 }
 

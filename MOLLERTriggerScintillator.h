@@ -28,6 +28,8 @@ public:
     virtual Int_t       CoarseProcess(TClonesArray& tracks);
     virtual Int_t       FineProcess(TClonesArray& tracks);
 
+    //Bool_t WithADC() { return fModeADC != MOLLERModeADC::kNone; };
+
 protected:
     Int_t    StoreHit( const DigitizerHitInfo_t& hitinfo, UInt_t data ) override;
     OptUInt_t LoadData( const THaEvData& evdata,
@@ -47,6 +49,8 @@ protected:
     virtual void        PrintDecodedData(const THaEvData& evdata) const;
     virtual Int_t       ReadDatabase(const TDatime& date);
     virtual Int_t       DefineVariables( EMode mode = kDefine );
+
+    //MOLLERModeADC::Mode fModeADC;      //< ADC Mode
 
     ClassDef(MOLLERTriggerScintillator, 1)
 };

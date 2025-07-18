@@ -14,13 +14,13 @@
 using namespace std;
 using namespace HallA;
 
-void replay_test_trigscint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
+void replay_moller_scint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
     // Create an apparatus and add your detector to it
     // THaApparatus* testApp = new THaApparatus("TestApp");
     MOLLERSpectrometer *moller = new MOLLERSpectrometer ("moller", "Generic apparatus");
-    MOLLERTriggerScintillator* trigscint = new MOLLERTriggerScintillator("scint", "scint");
+    MOLLERTriggerScintillator* scint = new MOLLERTriggerScintillator("scint", "scint");
     
-    moller->AddDetector(trigscint);
+    moller->AddDetector(scint);
 
     // Register the apparatus with the analyzer framework
     THaAnalyzer *analyzer = new THaAnalyzer;
@@ -98,7 +98,7 @@ void replay_test_trigscint(int runnum=372, int firstsegment=0, int maxsegments=1
   prefix = gSystem->Getenv("MOLLER_REPLAY");
   prefix += "/replay/";
 
-  TString odef_filename = "replay_moller_fadc.odef";
+  TString odef_filename = "replay_moller_scint.odef";
   
   odef_filename.Prepend( prefix );
 
