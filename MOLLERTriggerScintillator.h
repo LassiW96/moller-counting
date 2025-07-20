@@ -41,7 +41,11 @@ protected:
     Data_t      fResolution;        // Average time resolution per PMT (s)
 
     // per-event data
-    
+    Int_t      fNhits;     ///< Number of hits in event
+    Int_t      fNRefhits;     ///< Number of reference hits in event
+    Int_t      fNGoodTDChits;     ///< Number of good TDC hits in event
+    Int_t      fNGoodADChits;     ///< Number of good ADC hits in event
+
     // PMTData - how to change into FADCdata
     FADCData*               fPMTs;      // An array for the number of PMTs - from fadc data (how to declair an array of unknown length)
     std::set<Idx_t>         fHitIdx;    // Idices of PMTs with data

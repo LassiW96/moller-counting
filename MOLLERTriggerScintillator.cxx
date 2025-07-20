@@ -193,20 +193,20 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
     fIsSetup = (mode == kDefine);
 
     // Add variables for raw PMT data
-    class VarDefInfo {
+    /*class VarDefInfo {
     public:
         FADCData* pmtData;
         const char* key_prefix;
         const char* comment_subst;
         Int_t DefineVariables(EMode mode) const
         {return pmtData->DefineVariables(mode, key_prefix, comment_subst);} // FADCData::DefineVariables function is called here
-    };
-    if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
-        return ret;
+    };*/
+    /*if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
+        return ret;*/
 
     //cout << "In DefineVariables function" << endl;
         // Example variables - make sure these exist as data members!
-    /*RVarDef vars[] = {
+    RVarDef vars[] = {
         { "nhits", "Nhits",  "fNhits" },
         { "nrefhits", "Number of reference time hits",  "fNRefhits" },
         { "ngoodTDChits", "NGoodTDChits",  "fNGoodTDChits" },
@@ -214,10 +214,8 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
         { 0 }
       };
 
-    DefineVarsFromList(vars, mode);
+    return DefineVarsFromList(vars, mode);
 
-    return 0;*/
-    
     // Define detector-level analysis variables
     /*RVarDef vars[] = {
     { "adcrow",     "Row for block in data vectors",        "fGood.ADCrow" },
@@ -261,7 +259,7 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
     // Define general detector variables (track crossing coordinates etc.)
     // Objects in fDetectorData whose variables are not yet set up will be set up
     // as well. Our PMTData have already been initialized above & will be skipped.
-    return THaNonTrackingDetector::DefineVariables(mode);
+    //return THaNonTrackingDetector::DefineVariables(mode);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
