@@ -11,7 +11,6 @@ void replay_fadc( int runnum=372, int firstsegment=0, int maxsegments=1, long fi
     MOLLERSpectrometer *moller = new MOLLERSpectrometer("moller", "Generic apparatus");
     MOLLERGenericDetector *det = new MOLLERGenericDetector("scint", "scint");
     det->SetModeADC(MOLLERModeADC::kWaveform);
-    det->SetModeTDC(MOLLERModeTDC::kNone);
     det->SetStoreRawHits(1);
 
     moller->AddDetector(det);
@@ -79,7 +78,7 @@ void replay_fadc( int runnum=372, int firstsegment=0, int maxsegments=1, long fi
   outfilename.Form( "%s/moller_fadc_replayed_%d_seg%d_%d_3.root", prefix.Data(), runnum,firstsegment,lastsegment);
 
   analyzer->SetVerbosity(2);
-  analyzer->SetMarkInterval(100);
+  analyzer->SetMarkInterval(1);
 
   analyzer->EnableBenchmarks();
   

@@ -16,7 +16,7 @@
 class MOLLERElement : public TObject {
 
 public:
-  MOLLERElement() : fADC(nullptr), fTDC(nullptr), fWaveform(nullptr) {};
+  MOLLERElement() : fADC(nullptr), fWaveform(nullptr) {};
   MOLLERElement(Double_t x, Double_t y, Double_t z,
       Int_t row, Int_t col, Int_t layer, Int_t id = 0);
   virtual ~MOLLERElement();
@@ -28,14 +28,12 @@ public:
   Double_t GetE()     const { return fE; }
   Double_t GetAgain()     const { return fAgain; }
   Double_t GetAtime()     const { return fAtime; }
-  Double_t GetTDCtime()     const { return fTDCtime; }
   Int_t   GetRow()   const { return fRow; }
   Int_t   GetCol()   const { return fCol; }
   Int_t   GetLayer() const { return fLayer; }
   Int_t   GetStat()  const { return fStat; }
   Int_t   GetID()    const { return fID; }
   virtual MOLLERData::ADC* ADC()         { return fADC; }
-  virtual MOLLERData::TDC* TDC()         { return fTDC; }
   virtual MOLLERData::Waveform* Waveform() { return fWaveform; }
 
   // Setters
@@ -45,14 +43,12 @@ public:
   void SetE(Double_t var)    { fE = var; }
   void SetAgain(Double_t var)    { fAgain = var; }
   void SetAtime(Double_t var)    { fAtime = var; }
-  void SetTDCtime(Double_t var)    { fTDCtime = var; }
   void SetRow(Int_t var)    { fRow = var; }
   void SetCol(Int_t var)    { fCol = var; }
   void SetLayer(Int_t var)  { fLayer = var; }
   void SetStat(Int_t var)   { fStat = var; }
   void SetID(Int_t var)     { fID = var; }
   void SetADC(Double_t ped, Double_t gain);
-  void SetTDC(Double_t offset, Double_t cal, Double_t GoodTimeCut);
   void SetWaveform(Double_t ped, Double_t gain,Double_t ChanToMv,Double_t adc_timecut);
 
   // Sub-classes may want a more comprehensive clear
@@ -70,7 +66,6 @@ protected:
   Double_t fE;       ///< calibrated energy of event in this block
   Double_t fAgain;   ///< ADC gain coefficient (GeV/pC)
   Double_t fAtime;       ///< ADC time of event in this block
-  Double_t fTDCtime;       ///< TDC time of event in this block
 
   Int_t   fRow;     ///< Row of the block
   Int_t   fCol;     ///< Column of the block
@@ -79,7 +74,6 @@ protected:
   Int_t   fID;      ///< a logical number to this element
 
   MOLLERData::ADC *fADC; //< All ADC hits
-  MOLLERData::TDC *fTDC; //< All TDC hits
   MOLLERData::Waveform *fWaveform;
 
   ClassDef(MOLLERElement,1) ///< Generic shower block class (no data)
