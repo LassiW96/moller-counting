@@ -184,13 +184,23 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Define global analysis variables
-Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
-{
+//Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
+//{
     // Define global analysis variables
     // Modified to include FADCData
     // Clear existing variables if redefining
+
+    /*cout << "line 1" << endl;
     if (mode == kDefine && fIsInit) return kOK;
     fIsSetup = (mode == kDefine);
+
+    cout << "line 2" << endl;
+
+    //Int_t  ret = fPMTs->DefineVariables(mode);
+
+    //return ret;
+
+    return fPMTs->DefineVariables(mode);*/
 
     // Add variables for raw PMT data
     /*class VarDefInfo {
@@ -200,9 +210,9 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
         const char* comment_subst;
         Int_t DefineVariables(EMode mode) const
         {return pmtData->DefineVariables(mode, key_prefix, comment_subst);} // FADCData::DefineVariables function is called here
-    };*/
-    /*if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
-        return ret;*/
+    };
+    if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
+        return ret;
 
     //cout << "In DefineVariables function" << endl;
         // Example variables - make sure these exist as data members!
@@ -212,9 +222,7 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
         { "ngoodTDChits", "NGoodTDChits",  "fNGoodTDChits" },
         { "ngoodADChits", "NGoodADChits",  "fNGoodADChits" },
         { 0 }
-      };
-
-    return DefineVarsFromList(vars, mode);
+      };*/
 
     // Define detector-level analysis variables
     /*RVarDef vars[] = {
@@ -260,7 +268,7 @@ Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
     // Objects in fDetectorData whose variables are not yet set up will be set up
     // as well. Our PMTData have already been initialized above & will be skipped.
     //return THaNonTrackingDetector::DefineVariables(mode);
-}
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Destructor
@@ -281,19 +289,23 @@ void MOLLERTriggerScintillator::Clear(Option_t* opt)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Load data 
-OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
-    const DigitizerHitInfo_t& hitinfo )
-{
+//OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
+//    const DigitizerHitInfo_t& hitinfo )
+//{
 // Callback from Decoder for loading the data for the 'hitinfo' channel.
 // This routine supports FADC modules and returns the pulse amplitude integral.
 // Additional info is retrieved from the FADC modules in StoreHit later.
 
-if( hitinfo.type == Decoder::ChannelType::kMultiFunctionADC ) return FADCData::LoadFADCData(hitinfo);
+// figure this out
+/*if( !CheckHitInfo(hitinfo) ) 
+    return nullopt;*/
+    
+//cout << "In LoadData function" << endl;
+//return FADCData::LoadFADCData(hitinfo);
 
 //cout << "In LoadData function" << endl;
 
-return THaNonTrackingDetector::LoadData(evdata, hitinfo);
-}
+//}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Store Hit

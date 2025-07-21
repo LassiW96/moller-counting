@@ -31,9 +31,11 @@ public:
     //Bool_t WithADC() { return fModeADC != MOLLERModeADC::kNone; };
 
 protected:
+    //bool              CheckHitInfo( const DigitizerHitInfo_t& hitinfo ) const;
+
     Int_t    StoreHit( const DigitizerHitInfo_t& hitinfo, UInt_t data ) override;
-    OptUInt_t LoadData( const THaEvData& evdata,
-        const DigitizerHitInfo_t& hitinfo ) override;
+    //OptUInt_t LoadData( const THaEvData& evdata,
+        //const DigitizerHitInfo_t& hitinfo ) override;
     
     // Calibration parameters
     Data_t      fCn;                // Speed of light in the material (m/s)
@@ -52,7 +54,7 @@ protected:
     
     virtual void        PrintDecodedData(const THaEvData& evdata) const;
     virtual Int_t       ReadDatabase(const TDatime& date);
-    virtual Int_t       DefineVariables( EMode mode = kDefine );
+    //virtual Int_t       DefineVariables( EMode mode = kDefine ) override;
 
     //MOLLERModeADC::Mode fModeADC;      //< ADC Mode
 
