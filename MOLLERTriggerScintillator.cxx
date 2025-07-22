@@ -175,6 +175,7 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     //fHits.reserve(nval);
 
     // Calibration
+    fclose(file);
 
     // Debug
 
@@ -184,91 +185,32 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Define global analysis variables
-//Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
-//{
+Int_t MOLLERTriggerScintillator::DefineVariables(EMode mode)
+{
     // Define global analysis variables
     // Modified to include FADCData
     // Clear existing variables if redefining
 
-    /*cout << "line 1" << endl;
-    if (mode == kDefine && fIsInit) return kOK;
-    fIsSetup = (mode == kDefine);
+    Int_t ret = THaNonTrackingDetector::DefineVariables(mode);
+    if (ret) return ret;
 
-    cout << "line 2" << endl;
+    std::vector<RVarDef> ve;
+    ve.push_back( {"a","ADC integral", "fGood.a"} );
+    ve.push_back( {"a_p","ADC integral - ped", "fGood.a_p"} );
+    ve.push_back( {"a_c","(ADC integral - ped)*gain", "fGood.a_c"} );
+    ve.push_back( {"a_amp","ADC pulse amplitude", "fGood.a_amp"} );
+    ve.push_back( {"a_amp_p","ADC pulse amplitude -ped", "fGood.a_amp_p"} );
+    ve.push_back( {"a_amp_c","(ADC pulse amplitude -ped)*gain*AmpToIntRatio", "fGood.a_amp_c"} );
 
-    //Int_t  ret = fPMTs->DefineVariables(mode);
+    ve.push_back({0}); // End of the list
+      
+    ret = DefineVarsFromList( ve.data(), mode );
+    if (ret) return ret;
 
-    //return ret;
+    if (fPMTs) return fPMTs->DefineVariables(mode);
 
-    return fPMTs->DefineVariables(mode);*/
-
-    // Add variables for raw PMT data
-    /*class VarDefInfo {
-    public:
-        FADCData* pmtData;
-        const char* key_prefix;
-        const char* comment_subst;
-        Int_t DefineVariables(EMode mode) const
-        {return pmtData->DefineVariables(mode, key_prefix, comment_subst);} // FADCData::DefineVariables function is called here
-    };
-    if (Int_t ret = VarDefInfo{fPMTs, "p", "all-PMTs"}.DefineVariables(mode))
-        return ret;
-
-    //cout << "In DefineVariables function" << endl;
-        // Example variables - make sure these exist as data members!
-    RVarDef vars[] = {
-        { "nhits", "Nhits",  "fNhits" },
-        { "nrefhits", "Number of reference time hits",  "fNRefhits" },
-        { "ngoodTDChits", "NGoodTDChits",  "fNGoodTDChits" },
-        { "ngoodADChits", "NGoodADChits",  "fNGoodADChits" },
-        { 0 }
-      };*/
-
-    // Define detector-level analysis variables
-    /*RVarDef vars[] = {
-    { "adcrow",     "Row for block in data vectors",        "fGood.ADCrow" },
-    { "adccol",     "Col for block in data vectors",        "fGood.ADCcol" },
-    { "adcelemID",  "Element ID for block in data vectors", "fGood.ADCelemID" },
-    { "adclayer",   "Layer for block in data vectors",      "fGood.ADClayer" },
-    { "ped",        "Pedestal for block in data vectors",   "fGood.ped" },
-    { "a",          "ADC integral",                         "fGood.a" },
-    { "a_mult",     "ADC # hits in channel",                "fGood.a_mult" },
-    { "a_p",        "ADC integral - ped",                   "fGood.a_p" },
-    { "a_c",        "(ADC integral - ped)*gain",            "fGood.a_c" },
-    { nullptr }
-    };
-
-    if (Int_t ret = DefineVarsFromList(vars, mode))
-        return ret;
-
-    RVarDef advanced_adc[] = {
-        { "a_amp",       "ADC pulse amplitude",                 "fGood.a_amp" },
-        { "a_amp_p",     "ADC pulse amplitude -ped",            "fGood.a_amp_p" },
-        { "a_amp_c",     "(ADC amp - ped)*gain*AmpToIntRatio",  "fGood.a_amp_p" },
-        { "a_amptrig_p", "(ADC amp - ped)*AmpToIntRatio",       "fGood.a_amp_p" },
-        { "a_amptrig_c", "(ADC amp - ped)*gain*AmpToIntRatio",  "fGood.a_amp_p" },
-        { "a_time",      "ADC pulse time",                      "fGood.a_time" },
-        { nullptr }
-        };
-
-    if (Int_t ret = DefineVarsFromList(advanced_adc, mode))
-        return ret;
-
-    RVarDef raw_hits[] = {
-        { "hits.a",        "All ADC integrals",   "fRaw.a" },
-        { "hits.a_amp",    "All ADC amplitudes",  "fRaw.a_amp" },
-        { "hits.a_time",   "All ADC pulse times", "fRaw.a_time" },
-        { nullptr }
-        };
-        
-    if (Int_t ret = DefineVarsFromList(raw_hits, mode))
-        return ret;*/
-
-    // Define general detector variables (track crossing coordinates etc.)
-    // Objects in fDetectorData whose variables are not yet set up will be set up
-    // as well. Our PMTData have already been initialized above & will be skipped.
-    //return THaNonTrackingDetector::DefineVariables(mode);
-//}
+    return 0;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Destructor
@@ -285,27 +227,26 @@ void MOLLERTriggerScintillator::Clear(Option_t* opt)
     //cout << "In Clear function" << endl;
 
     THaNonTrackingDetector::Clear(opt);
+    //ClearOutputVariables();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Load data 
-//OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
-//    const DigitizerHitInfo_t& hitinfo )
-//{
+OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
+    const DigitizerHitInfo_t& hitinfo )
+{
 // Callback from Decoder for loading the data for the 'hitinfo' channel.
 // This routine supports FADC modules and returns the pulse amplitude integral.
 // Additional info is retrieved from the FADC modules in StoreHit later.
 
 // figure this out
-/*if( !CheckHitInfo(hitinfo) ) 
-    return nullopt;*/
-    
-//cout << "In LoadData function" << endl;
-//return FADCData::LoadFADCData(hitinfo);
+if (hitinfo.type == Decoder::ChannelType::kMultiFunctionADC)
+    return FADCData::LoadFADCData(hitinfo);
 
-//cout << "In LoadData function" << endl;
+// Fallback to legacy modules
+return THaNonTrackingDetector::LoadData(evdata, hitinfo);
 
-//}
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Store Hit
@@ -323,7 +264,7 @@ Int_t MOLLERTriggerScintillator::StoreHit( const DigitizerHitInfo_t& hitinfo, UI
   // Just added the function
 
   // Now fill the PMTData in fDetectorData
-  return 0;
+  return THaNonTrackingDetector::StoreHit(hitinfo, data);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Print decoded data for debugging
