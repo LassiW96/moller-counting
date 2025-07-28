@@ -64,8 +64,8 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
 
     const char* const here = "ReadDatabase";
 
-    VarType kDataType  = std::is_same<Data_t, Float_t>::value ? kFloat  : kDouble;
-    VarType kDataTypeV = std::is_same<Data_t, Float_t>::value ? kFloatV : kDoubleV;
+    //VarType kDataType  = std::is_same<Data_t, Float_t>::value ? kFloat  : kDouble;
+    //VarType kDataTypeV = std::is_same<Data_t, Float_t>::value ? kFloatV : kDoubleV;
 
     FILE* file = OpenFile(date);
     if (!file) return kFileError;
@@ -77,7 +77,7 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
         return err;
     }
 
-    enum {kModeUnset = -255, kCommonStop = 0, kCommonStart = 1};
+    //enum {kModeUnset = -255, kCommonStop = 0, kCommonStart = 1};
 
     vector<Int_t> detmap;
     vector<Int_t> chanmap;
@@ -108,7 +108,6 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     // Reinitialization
     if (!err) {
         if (fIsInit && ncols != fNelem) {
-            // Assume ncols as the number of paddles
             Error(Here(here), "Cannot re-initialize with different number of paddles. "
         "(was: %d, now: %d). Detector not re-initialized.", fNelem, ncols);
         err = kInitError;
@@ -116,16 +115,18 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
         fNelem = ncols;
     }
 
+    std::cout << "value of fNelem: " << fNelem << std::endl;
+
     // kFillLogicalChannel:     Logical channel number for start channel
     // kFillModel:              Module's hardware model number 
     // kFillRefIndex:           Specify reference index/channel
     // see THaDetMap::Fill for further comments
 
-    //UInt_t flags = THaDetMap::kFillLogicalChannel | THaDetMap::kFillModel; // According to THaScintillator
-    UInt_t flags = THaDetMap::kFillRefIndex; // According to Generic detector
-    if(model_in_detmap) {
+    UInt_t flags = THaDetMap::kFillLogicalChannel | THaDetMap::kFillModel; // According to THaScintillator
+    //UInt_t flags = THaDetMap::kFillRefIndex; // According to Generic detector
+    /*if(model_in_detmap) {
         flags |= THaDetMap::kFillModel;
-    }
+    }*/
     if (!err && FillDetMap(detmap, flags, here) <= 0) {
         err = kInitError;
     }
@@ -136,21 +137,26 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     if (!err) {
         UInt_t tot_nchan = fDetMap->GetTotNumChan();
         if (tot_nchan != 2 * nval) {
-            // This number should be changed according to the number of PMTs per detector
+            // There are 7 scintillator paddles per layer in the tracking array. Puting 2 for now 
+            // according to w & m test stand
             Error(Here(here), "Number of detector map channels (%u) "
                               "inconsistent with 2 * number of paddles (%d)",
                             tot_nchan, 2 * fNelem);
             err = kInitError;
         }
     }
+    // Get the cratemap
+    Decoder::THaCrateMap *cratemap = MOLLERManager::GetInstance()->GetCrateMap();
 
     // Modifying line 153 - 161 in THaScintillator
     UInt_t nmodules = fDetMap->GetSize();
     for (UInt_t i = 0; i < nmodules; i++) {
         THaDetMap::Module* d = fDetMap->GetModule(i);
+        std::cout << "Model before: " << d->model << std::endl;
         if (!d->model) {
             // Model number of the module
-            d->MakeADC();
+            d->SetModel(cratemap->getModel(d->crate,d->slot));
+            std::cout << "Model after: " << d->model << std::endl;
             // Skipping TDC mode
         }
     }
@@ -240,11 +246,17 @@ OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
 // Additional info is retrieved from the FADC modules in StoreHit later.
 
 // figure this out
-if (hitinfo.type == Decoder::ChannelType::kMultiFunctionADC)
+std::cout << "[DEBUG] ChannelType = " << static_cast<int>(hitinfo.type) << std::endl;
+if (hitinfo.type == Decoder::ChannelType::kMultiFunctionADC) {
+    std::cout << "[DEBUG] Identified kMultiFunctionADC\n";
     return FADCData::LoadFADCData(hitinfo);
+}
 
 // Fallback to legacy modules
 return THaNonTrackingDetector::LoadData(evdata, hitinfo);
+//if (ret) return ret;
+
+//return 0;
 
 }
 
@@ -255,8 +267,8 @@ Int_t MOLLERTriggerScintillator::StoreHit( const DigitizerHitInfo_t& hitinfo, UI
   // Put decoded frontend data into fDetectorData. Called from Decode().
   // Data decoding is also done here - from FADCData
   // Call StoreHit for the FADC modules first to get updated pedestals
-  FADCData* fadcData = fPMTs;
-  fadcData->StoreHit(hitinfo, data);
+  //FADCData* fadcData = fPMTs;
+  fPMTs->StoreHit(hitinfo, data);
 
   //cout << "In StoreHit function" << endl;
 

@@ -66,3 +66,8 @@ moller.scint.TFlag = 2
 
 ## TDC scalling factor, not using this, without this it puts out an error
 moller.scint.TDCScale = 1
+
+#Number of paddles
+moller.scint.npaddles = 16
+
+moller.scint.tdc.res = 1
