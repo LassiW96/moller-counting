@@ -9,17 +9,18 @@
 
 #include "MOLLERTriggerScintillator.h"
 #include "MOLLERSpectrometer.h"
+#include "MOLLERTestScint.h"
 #include "THaApparatus.h"
 #include "FadcScintillator.h"
 
 using namespace std;
 using namespace HallA;
 
-void replay_fadc_scint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
+void replay_test_scint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
     // Create an apparatus and add your detector to it
     // THaApparatus* testApp = new THaApparatus("TestApp");
     MOLLERSpectrometer *moller = new MOLLERSpectrometer ("moller", "Generic apparatus");
-    FadcScintillator* scint = new FadcScintillator("scint", "scint");
+    MOLLERTestScint* scint = new MOLLERTestScint("scint", "scint");
     
     moller->AddDetector(scint);
 
@@ -83,7 +84,7 @@ void replay_fadc_scint(int runnum=372, int firstsegment=0, int maxsegments=1, lo
   firstsegment = 0;
   lastsegment = 1;
   TString outfilename;
-  outfilename.Form( "%s/FadcScint_test_replayed_%d_seg%d_%d.root", prefix.Data(), runnum,firstsegment,lastsegment);
+  outfilename.Form( "%s/TestScint_replayed_%d_seg%d_%d.root", prefix.Data(), runnum,firstsegment,lastsegment);
 
   analyzer->SetVerbosity(2);
   analyzer->SetMarkInterval(100);
@@ -94,7 +95,7 @@ void replay_fadc_scint(int runnum=372, int firstsegment=0, int maxsegments=1, lo
   analyzer->SetEvent( event );
   analyzer->SetOutFile( outfilename.Data() );
   // File to record cuts accounting information
-  analyzer->SetSummaryFile("FadcScint_test_summary.log"); // optional
+  analyzer->SetSummaryFile("TestScint_test_summary.log"); // optional
 
   prefix = gSystem->Getenv("MOLLER_REPLAY");
   prefix += "/replay/";

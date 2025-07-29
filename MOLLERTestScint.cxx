@@ -144,3 +144,93 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
     fIsInit = true;
     return kOK;
 }
+
+// Define/delete global vars
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+Int_t MOLLERTestScint::DefineVariables(EMode mode)
+{
+    // Define more variables as required
+    // Only including following for now
+    RVarDef vars[] = {
+        {"nhits",       "Number of hits",       "GetNhits()"},
+        {"chan",        "Channel number",       "fEventData.fChannel"},
+        {"adc",         "Raw ADC value",        "fEventData.fRawADC"},
+        {"adc_c",       "Calibrated ADC value", "fEventData.fCalADC"},
+        {nullptr}
+    };
+    return DefineVarsFromList(vars, mode);
+}
+
+// Clear per-event data - this is called before Decode() function
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void MOLLERTestScint::Clear(Option_t* opt)
+{
+    THaNonTrackingDetector::Clear(opt);
+    fEventData.clear();
+}
+
+// Store decoded data
+// See SDK/UserDetector.cxx for more info
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
+{
+    Int_t chan = hitinfo.lchan; // Logical channel according to detmap
+
+    // Bug check if "chan" is in range
+    #ifndef NDEBUG
+        if (chan < 0 || chan >= fNelem)
+        throw std::logic_error("MOLLERTestScint::StoreHit: invalid logical channel");
+    #endif
+
+    // Copy the data into the structure
+    fEventData.emplace_back(chan, data, (data - fPed[chan])*fGain[chan]);
+    return 0;
+}
+
+// Coarse process & Fine process
+// Fill these functions as required
+// Returns nothing for now
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+Int_t MOLLERTestScint::CoarseProcess(TClonesArray& )
+{
+    return 0;
+}
+
+Int_t MOLLERTestScint::FineProcess(TClonesArray& )
+{
+    return 0;
+}
+
+// Helper macro to print a single field of a structure in a std::vector
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define PrintArrayField(txt, var, field)                \
+    cout << (txt) << " = ";                             \
+    {                                                   \
+        if ((var).empty())                              \
+            cout << "(empty)";                          \
+        else {                                          \
+            for (auto it = (var).begin();               \
+                        it != (var).end(); ++it) {      \
+                cout << (*it).field;                    \
+                if (it+1 != (var).end()) cout << ", ";  \
+                }                                       \
+        }                                               \
+    } cout << endl;
+
+// Print current config
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void MOLLERTestScint::Print(Option_t* opt) const
+{
+    THaDetector::Print(opt);
+    cout << "detmap = "; fDetMap->Print();
+    cout << "nelem = " << fNelem << endl;
+    /*cout << "pedestals = "; PrintArray( fPed );
+    cout << "gains = ";     PrintArray( fGain );*/
+    cout << "nhits = " << fEventData.size() << endl;
+    PrintArrayField("channel", fEventData, fChannel)
+    PrintArrayField("rawadc", fEventData, fRawADC)
+    PrintArrayField("coradc", fEventData, fCalADC)
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+ClassImp(MOLLERTestScint)
