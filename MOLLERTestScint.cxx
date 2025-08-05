@@ -5,18 +5,22 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 #include "MOLLERTestScint.h"
+#include "FADCData.h"
 #include "VarDef.h"
 #include "THaDetMap.h"
 #include "TMath.h"
 #include "Helper.h"
 #include "THaTrack.h"
 #include "TClonesArray.h"
+#include "Fadc250Module.h"
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
 using namespace std;
 using namespace Podd;
+
+namespace HallA {
 
 // Hard coded maximum number of channels
 static const int MAXCHAN = 100;
@@ -43,7 +47,7 @@ MOLLERTestScint::~MOLLERTestScint()
 Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 {
     // See analyzer/SDK for more information about opening the database file
-    const char* const here = "RaedeDatabase";
+    const char* const here = "RaedDatabase";
 
     FILE* file = OpenFile(date);
     if (!file) return kFileError;
@@ -73,7 +77,7 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
         err = LoadDB(file, date, request);
 
         // If no error, parse the detmap. See THaDetMap for more details about flags
-        if (err ==kOK) {
+        if (err == kOK) {
             if (FillDetMap(detmap, THaDetMap::kFillLogicalChannel, here) <= 0) {
                 err = kInitError;
             }
@@ -94,7 +98,7 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
     // This has to modify according to MOLLER trigger scintillator 
     // Using the following parameters as an example
     if (nelem <= 0) {
-        Error (Here(here), "Cannot have a zero or negetive number of elements. "
+        Error (Here(here), "Cannot have a zero or negative number of elements. "
                 "Fix the DB.");
         return kInitError;
     }
@@ -140,6 +144,27 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
     const Double_t degrad = TMath::Pi()/180.0;
     DefineAxes(angle*degrad);
 
+    using namespace Decoder;
+    fFadcModules.clear(); // if you define fFadcModules as vector<Fadc250Module*>
+    
+    for (UInt_t i = 0; i < fDetMap->GetSize(); ++i) {
+        const THaDetMap::Module* mod = fDetMap->GetModule(i);
+        Int_t crate = mod->crate;
+        Int_t slot  = mod->slot;
+    
+        TString fadcName;
+        fadcName.Form("crate%uslot%u", crate, slot);
+    
+        Fadc250Module* fadc = dynamic_cast<Fadc250Module*>(
+            FindModule(fadcName, "Decoder::Fadc250Module", /*do_error=*/true));
+        if (!fadc) {
+            Error("ReadDatabase", "FADC250 module %s not found", fadcName.Data());
+            return kInitError;
+        }
+    
+        fFadcModules.push_back(fadc);
+    }
+
     // Finish up
     fIsInit = true;
     return kOK;
@@ -169,6 +194,44 @@ void MOLLERTestScint::Clear(Option_t* opt)
     fEventData.clear();
 }
 
+// Adding LoadData function according to FADCScintillator
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
+    const DigitizerHitInfo_t& hitinfo )
+{
+    // Callback from Decoder for loading the data for the 'hitinfo' channel.
+    // This routine supports FADC modules and returns the pulse amplitude integral.
+    // Additional info is retrieved from the FADC modules in StoreHit later.
+
+    cout << "hit type: " << static_cast<int>(hitinfo.type) << endl;
+
+    // Only handle FADC hits directly
+    if (hitinfo.type == Decoder::ChannelType::kMultiFunctionADC) {
+        // Loop over all FADC modules to find matching crate/slot
+        for (const auto& fadc : fFadcModules) {
+            if (!fadc) continue;
+
+            if (fadc->GetCrate() == hitinfo.crate && fadc->GetSlot() == hitinfo.slot) {
+                UInt_t chan_hw = hitinfo.chan;
+                UInt_t npulses = fadc->GetNumFadcEvents(chan_hw);
+                if (npulses > 0) {
+                    // Get the pulse integral (e.g., from first pulse)
+                    UInt_t pulse_integral = fadc->GetEmulatedPulseIntegralData(chan_hw);
+                    return pulse_integral;
+                } else {
+                    return 0; // No pulse data
+                }
+            }
+        }
+
+        // If no matching module found
+        return 0;
+    }
+
+    // Fallback for legacy modules
+    return THaNonTrackingDetector::LoadData(evdata, hitinfo);
+}
+
 // Store decoded data
 // See SDK/UserDetector.cxx for more info
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,8 +245,26 @@ Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
         throw std::logic_error("MOLLERTestScint::StoreHit: invalid logical channel");
     #endif
 
-    // Copy the data into the structure
-    fEventData.emplace_back(chan, data, (data - fPed[chan])*fGain[chan]);
+    // Default values
+    Double_t adc = (data - fPed[chan]) * fGain[chan];
+    Double_t time = -999.0;
+
+    // Loop over all FADC modules to find the one matching this hit
+    for (const auto& fadc : fFadcModules) {
+        if (!fadc) continue;
+
+        if (fadc->GetCrate() == hitinfo.crate && fadc->GetSlot() == hitinfo.slot) {
+            UInt_t npulses = fadc->GetNumFadcEvents(hitinfo.chan);
+            if (npulses > 0) {
+                UInt_t raw_time = fadc->GetPulseTimeData(hitinfo.chan, 0);
+                constexpr Double_t tick_ns = 4.0; // 250 MHz
+                time = raw_time * tick_ns;
+            }
+            break; // We found the right module
+        }
+    }
+    // Store into your internal structure
+    fEventData.emplace_back(chan, data, adc, time);
     return 0;
 }
 
@@ -233,4 +314,6 @@ void MOLLERTestScint::Print(Option_t* opt) const
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-ClassImp(MOLLERTestScint)
+
+} // namespace HallA
+ClassImp(HallA::MOLLERTestScint)

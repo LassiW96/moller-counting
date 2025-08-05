@@ -6,13 +6,14 @@
 #include "THaEvent.h"
 #include "TDatime.h"
 #include "TString.h"
-
+#include "Fadc250Module.h"
 #include "MOLLERTriggerScintillator.h"
 #include "MOLLERSpectrometer.h"
 #include "THaApparatus.h"
 
 using namespace std;
 using namespace HallA;
+using namespace Decoder;
 
 void replay_moller_scint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
     // Create an apparatus and add your detector to it

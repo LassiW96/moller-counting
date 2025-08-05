@@ -59,6 +59,7 @@ set(sources
   MOLLERGenericDetector.cxx MOLLERElement.cxx MOLLERData.cxx MOLLERManager.cxx
   MOLLERTriggerScintillator.cxx
   MOLLERTestScint.cxx
+  #Fadc250Module.cxx
   )
 
 # Headers.

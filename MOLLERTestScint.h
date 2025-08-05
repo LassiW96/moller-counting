@@ -7,7 +7,14 @@
 #define Podd_MOLLERTestScint_h_
 
 #include "THaNonTrackingDetector.h"
+#include "FADCData.h"
+#include "Fadc250Module.h"
 #include <vector>
+
+using namespace Decoder;
+namespace HallA {
+
+class FADCData;
 
 class MOLLERTestScint: public THaNonTrackingDetector {
 
@@ -32,9 +39,14 @@ public:
     Int_t GetNhits() const { return static_cast<Int_t>(fEventData.size()); }
 
 protected:
+    OptUInt_t LoadData( const THaEvData& evdata,
+                        const DigitizerHitInfo_t& hitinfo ) override;
     virtual Int_t ReadDatabase(const TDatime& date); // Read config parameters from the database
     virtual Int_t DefineVariables(EMode mode); // Define global analysis vars
 
+    // FADC decoding 
+    std::vector<Decoder::Fadc250Module*> fFadcModules;
+    
     //---- Data stored with this detector follow here ----
     typedef std::vector<Data_t> DataVec_t;
     
@@ -49,9 +61,10 @@ protected:
     Int_t   fChannel;   // Logical channel number
     Data_t  fRawADC;    // Raw ADC data
     Data_t  fCalADC;    // Pedestal-subtracted and gain-calibrated ADC data
+    Double_t time;      // Time from FADCs
     // Define a constructor so we can fill all fields in one line
-    EventData(Int_t chan, Data_t raw, Data_t cal)
-    : fChannel(chan), fRawADC(raw), fCalADC(cal) {}
+    EventData(Int_t chan, Data_t raw, Data_t cal, Double_t t)
+    : fChannel(chan), fRawADC(raw), fCalADC(cal), time(t) {}
     };
 
     // Vector with the hit information for the current event
@@ -60,5 +73,7 @@ protected:
     ClassDef(MOLLERTestScint, 0)
 
 };
+
+} // namespace HallA
 
 #endif
