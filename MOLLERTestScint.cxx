@@ -6,7 +6,7 @@
 
 #include "MOLLERTestScint.h"
 #include "FADCData.h"
-#include "VarDef.h"
+/*#include "VarDef.h"
 #include "THaDetMap.h"
 #include "TMath.h"
 #include "Helper.h"
@@ -16,11 +16,10 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+*/
 
 using namespace std;
 using namespace Podd;
-
-namespace HallA {
 
 // Hard coded maximum number of channels
 static const int MAXCHAN = 100;
@@ -29,7 +28,7 @@ static const int MAXCHAN = 100;
 //////////////////////////////////////////////////////////////////////////////////////
 MOLLERTestScint::MOLLERTestScint(const char* name, const char* description,
                                 THaApparatus* apparatus) :
-                                THaNonTrackingDetector(name, description, apparatus)
+                                THaNonTrackingDetector(name, description, apparatus), fPMT(nullptr)
 {
     // Constructor
 }
@@ -46,126 +45,57 @@ MOLLERTestScint::~MOLLERTestScint()
 ///////////////////////////////////////////////////////////////////////////////////////
 Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 {
-    // See analyzer/SDK for more information about opening the database file
-    const char* const here = "RaedDatabase";
+    std::cout << "[DEBUG] in RDB = " << std::endl;
+
+    const char* const here = "ReadDatabase";
+
+    //VarType kDataType  = std::is_same<Data_t, Float_t>::value ? kFloat  : kDouble;
+    //VarType kDataTypeV = std::is_same<Data_t, Float_t>::value ? kFloatV : kDoubleV;
 
     FILE* file = OpenFile(date);
     if (!file) return kFileError;
 
-    // Clear all variables and vectors
-    Int_t nelem = 0;
-    Double_t angle = 0.0;
-    fPed.clear();
-    fGain.clear();
-
-    // Detector map
-    vector<Int_t> detmap;
-
-    // Read the DB. Using a try block to handle exeptions
-    Int_t err = 0;
-    try {
-        // Ignoring the automatic data type determination for now
-        const DBRequest request[] = {
-            // Required items
-            {"detmap",      &detmap,        kIntV},
-            {"nelem",       &nelem,         kInt,       0,      false,      -1}, // Number of element. eg. PMTs
-            {"angle",       &angle,         kDouble,    0,  true}, // Rotational angle (this is optional)
-            {nullptr} // Last element should be a null pointer
-        };
-
-        // Read the requested values
-        err = LoadDB(file, date, request);
-
-        // If no error, parse the detmap. See THaDetMap for more details about flags
-        if (err == kOK) {
-            if (FillDetMap(detmap, THaDetMap::kFillLogicalChannel, here) <= 0) {
-                err = kInitError;
-            }
-        }
-    }
-
-    // Catch the exeptions and close the file
-    catch(...) {
+    // Read fOrigin and fsize (required!)
+    Int_t err = ReadGeometry(file, date, true);
+    if (err) {
         fclose(file);
-        throw;
+        return err;
     }
 
-    // Normal end of reading the DB
+    //enum {kModeUnset = -255, kCommonStop = 0, kCommonStart = 1};
+
+    vector<Int_t> detmap;
+    vector<Int_t> chanmap;
+    Int_t model_in_detmap = 0;
+    Int_t ncols = 0;
+    Int_t nrows = 0;
+
+    DBRequest config_request[] = {
+        { "detmap",             &detmap,            kIntV },
+        { "model_in_detmap",    &model_in_detmap,   kInt,   0,  true},
+        { "chanmap",            &chanmap,           kIntV },
+        { "ncols",              &ncols,             kInt },
+        { "nrows",              &nrows,             kInt },
+        { nullptr }
+    };
+
+    err = LoadDB(file, date, config_request, fPrefix);
+
+    auto ret = HallA::MakeFADCData(date, this);
+    if (ret.second)
+        return ret.second; // Database error
+
+    fPMT = ret.first.get();
+
+    fDetectorData.emplace_back(move(ret.first));
+
+    //fPadData.resize(nval);
+    //fHits.reserve(nval);
+
+    // Calibration
     fclose(file);
-    if (err != kOK) return err;
+    // Debug
 
-    // Sanity checks
-    // This has to modify according to MOLLER trigger scintillator 
-    // Using the following parameters as an example
-    if (nelem <= 0) {
-        Error (Here(here), "Cannot have a zero or negative number of elements. "
-                "Fix the DB.");
-        return kInitError;
-    }
-    if (nelem > MAXCHAN) {
-        Error ( Here(here), "Illegal number of elements = %d. Must be <= %d. "
-	            "Fix database.", nelem, MAXCHAN );
-        return kInitError;
-    }
-
-    // Prevent the global variables dynamic allocation
-    if (fIsInit && nelem !=fNelem) {
-        ostringstream ostr;
-        ostr << "Cannot re-initialize with different number of elements. "
-            << "(was: " << fNelem << ", now: " << nelem << "). "
-            << "Detector not re-initialized.";
-        Error( Here(here), "%s", ostr.str().c_str() );
-        return kInitError;
-    }
-
-    // Store nelem
-    fNelem = nelem;
-
-    // Check the detector map size
-    // Assuming each detector element uses only one hardware channel, for now
-    // Have to change this appropreately
-    UInt_t nchan = fDetMap->GetTotNumChan(), nval = nelem;
-    if (nchan != nval) {
-        ostringstream ostr;
-        ostr << "Incorrect number of detector map channels = " << nchan
-            << ". Must equal nelem = " << nval << ". Fix database.";
-        Error( Here(here), "%s", ostr.str().c_str() );
-        return kInitError;
-    }
-
-    // Sanity checks for pedestals and gains
-    // Add these if necessary
-
-    // If any of the pedestal or gain values are not given in the DB, set them to default values
-    if (fPed.empty()) fPed.assign(nelem, 0.0);
-    if (fGain.empty()) fGain.assign(nelem, 1.0);
-
-    // Use the Rotation angle to set the axes vectors
-    const Double_t degrad = TMath::Pi()/180.0;
-    DefineAxes(angle*degrad);
-
-    using namespace Decoder;
-    fFadcModules.clear(); // if you define fFadcModules as vector<Fadc250Module*>
-    
-    for (UInt_t i = 0; i < fDetMap->GetSize(); ++i) {
-        const THaDetMap::Module* mod = fDetMap->GetModule(i);
-        Int_t crate = mod->crate;
-        Int_t slot  = mod->slot;
-    
-        TString fadcName;
-        fadcName.Form("crate%uslot%u", crate, slot);
-    
-        Fadc250Module* fadc = dynamic_cast<Fadc250Module*>(
-            FindModule(fadcName, "Decoder::Fadc250Module", /*do_error=*/true));
-        if (!fadc) {
-            Error("ReadDatabase", "FADC250 module %s not found", fadcName.Data());
-            return kInitError;
-        }
-    
-        fFadcModules.push_back(fadc);
-    }
-
-    // Finish up
     fIsInit = true;
     return kOK;
 }
@@ -174,6 +104,8 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 Int_t MOLLERTestScint::DefineVariables(EMode mode)
 {
+    std::cout << "[DEBUG] Def var = " << std::endl;
+
     // Define more variables as required
     // Only including following for now
     RVarDef vars[] = {
@@ -194,42 +126,46 @@ void MOLLERTestScint::Clear(Option_t* opt)
     fEventData.clear();
 }
 
+// Adding a decode method according to THaScintillator
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
+{
+
+    std::cout << "[DEBUG] in Decode = " << std::endl;
+  // Decode scintillator data, correct TDC times and ADC amplitudes, and copy
+  // the data to the local data members.
+  // Additionally, apply timewalk corrections and find "paddle hits" (= hits
+  // with TDC signals on both sides).
+
+  THaNonTrackingDetector::Decode(evdata);
+  // Figure out how to put LoadData and StoreHit here.
+
+  return kOK;
+}
+
 // Adding LoadData function according to FADCScintillator
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
     const DigitizerHitInfo_t& hitinfo )
 {
-    // Callback from Decoder for loading the data for the 'hitinfo' channel.
-    // This routine supports FADC modules and returns the pulse amplitude integral.
-    // Additional info is retrieved from the FADC modules in StoreHit later.
+    std::cout << "[DEBUG] in Load data= " << std::endl;
 
-    cout << "hit type: " << static_cast<int>(hitinfo.type) << endl;
+// Callback from Decoder for loading the data for the 'hitinfo' channel.
+// This routine supports FADC modules and returns the pulse amplitude integral.
+// Additional info is retrieved from the FADC modules in StoreHit later.
 
-    // Only handle FADC hits directly
-    if (hitinfo.type == Decoder::ChannelType::kMultiFunctionADC) {
-        // Loop over all FADC modules to find matching crate/slot
-        for (const auto& fadc : fFadcModules) {
-            if (!fadc) continue;
+// figure this out
+std::cout << "[DEBUG] ChannelType = " << static_cast<int>(hitinfo.type) << std::endl;
+if (hitinfo.type == Decoder::ChannelType::kMultiFunctionADC) {
+    std::cout << "[DEBUG] Identified kMultiFunctionADC\n";
+    return HallA::FADCData::LoadFADCData(hitinfo);
+}
 
-            if (fadc->GetCrate() == hitinfo.crate && fadc->GetSlot() == hitinfo.slot) {
-                UInt_t chan_hw = hitinfo.chan;
-                UInt_t npulses = fadc->GetNumFadcEvents(chan_hw);
-                if (npulses > 0) {
-                    // Get the pulse integral (e.g., from first pulse)
-                    UInt_t pulse_integral = fadc->GetEmulatedPulseIntegralData(chan_hw);
-                    return pulse_integral;
-                } else {
-                    return 0; // No pulse data
-                }
-            }
-        }
+// Fallback to legacy modules
+return THaNonTrackingDetector::LoadData(evdata, hitinfo);
+//if (ret) return ret;
 
-        // If no matching module found
-        return 0;
-    }
-
-    // Fallback for legacy modules
-    return THaNonTrackingDetector::LoadData(evdata, hitinfo);
+//return 0;
 }
 
 // Store decoded data
@@ -237,35 +173,20 @@ OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
 {
-    Int_t chan = hitinfo.lchan; // Logical channel according to detmap
+    std::cout << "[DEBUG] in StoreHit = " << std::endl;
+  // Put decoded frontend data into fDetectorData. Called from Decode().
+  // Data decoding is also done here - from FADCData
+  // Call StoreHit for the FADC modules first to get updated pedestals
+  //FADCData* fadcData = fPMTs;
+  fPMT->StoreHit(hitinfo, data);
 
-    // Bug check if "chan" is in range
-    #ifndef NDEBUG
-        if (chan < 0 || chan >= fNelem)
-        throw std::logic_error("MOLLERTestScint::StoreHit: invalid logical channel");
-    #endif
+  //cout << "In StoreHit function" << endl;
 
-    // Default values
-    Double_t adc = (data - fPed[chan]) * fGain[chan];
-    Double_t time = -999.0;
+  // Retrieve pedestal, if available, and update the PMTData calibrations
+  // Just added the function
 
-    // Loop over all FADC modules to find the one matching this hit
-    for (const auto& fadc : fFadcModules) {
-        if (!fadc) continue;
-
-        if (fadc->GetCrate() == hitinfo.crate && fadc->GetSlot() == hitinfo.slot) {
-            UInt_t npulses = fadc->GetNumFadcEvents(hitinfo.chan);
-            if (npulses > 0) {
-                UInt_t raw_time = fadc->GetPulseTimeData(hitinfo.chan, 0);
-                constexpr Double_t tick_ns = 4.0; // 250 MHz
-                time = raw_time * tick_ns;
-            }
-            break; // We found the right module
-        }
-    }
-    // Store into your internal structure
-    fEventData.emplace_back(chan, data, adc, time);
-    return 0;
+  // Now fill the PMTData in fDetectorData
+  return THaNonTrackingDetector::StoreHit(hitinfo, data);
 }
 
 // Coarse process & Fine process
@@ -300,20 +221,18 @@ Int_t MOLLERTestScint::FineProcess(TClonesArray& )
 
 // Print current config
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void MOLLERTestScint::Print(Option_t* opt) const
+/*void MOLLERTestScint::Print(Option_t* opt) const
 {
     THaDetector::Print(opt);
     cout << "detmap = "; fDetMap->Print();
     cout << "nelem = " << fNelem << endl;
-    /*cout << "pedestals = "; PrintArray( fPed );
-    cout << "gains = ";     PrintArray( fGain );*/
+    //cout << "pedestals = "; PrintArray( fPed );
+    //cout << "gains = ";     PrintArray( fGain );
     cout << "nhits = " << fEventData.size() << endl;
     PrintArrayField("channel", fEventData, fChannel)
     PrintArrayField("rawadc", fEventData, fRawADC)
     PrintArrayField("coradc", fEventData, fCalADC)
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-} // namespace HallA
-ClassImp(HallA::MOLLERTestScint)
+ClassImp(MOLLERTestScint)

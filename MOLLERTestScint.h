@@ -12,7 +12,6 @@
 #include <vector>
 
 using namespace Decoder;
-namespace HallA {
 
 class FADCData;
 
@@ -31,10 +30,11 @@ public:
 
     // Public base functions
     virtual void Clear(Option_t* opt="");
+    virtual Int_t     Decode( const THaEvData& );
     virtual Int_t StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data);
     virtual Int_t CoarseProcess(TClonesArray& tracks);
     virtual Int_t FineProcess(TClonesArray& tracks);
-    virtual void   Print( Option_t* opt="" ) const;
+    //virtual void   Print( Option_t* opt="" ) const;
 
     Int_t GetNhits() const { return static_cast<Int_t>(fEventData.size()); }
 
@@ -46,7 +46,9 @@ protected:
 
     // FADC decoding 
     std::vector<Decoder::Fadc250Module*> fFadcModules;
-    
+    Fadc250Module* fFadc;
+    TString fFadcName;
+    HallA::FADCData*               fPMT;      // An array for the number of PMTs - from fadc data (how to declair an array of unknown length)
     //---- Data stored with this detector follow here ----
     typedef std::vector<Data_t> DataVec_t;
     
@@ -73,7 +75,5 @@ protected:
     ClassDef(MOLLERTestScint, 0)
 
 };
-
-} // namespace HallA
 
 #endif
