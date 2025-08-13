@@ -84,7 +84,7 @@ void replay_test_scint(int runnum=372, int firstsegment=0, int maxsegments=1, lo
   firstsegment = 0;
   lastsegment = 1;
   TString outfilename;
-  outfilename.Form( "%s/TestScint_replayed_%d_seg%d_%d.root", prefix.Data(), runnum,firstsegment,lastsegment);
+  outfilename.Form( "%s/TestScint_replayed_%d_seg%d_%d_0.root", prefix.Data(), runnum,firstsegment,lastsegment);
 
   analyzer->SetVerbosity(2);
   analyzer->SetMarkInterval(100);

@@ -30,7 +30,7 @@ public:
 
     // Public base functions
     virtual void Clear(Option_t* opt="");
-    virtual Int_t     Decode( const THaEvData& );
+    //virtual Int_t     Decode( const THaEvData& );
     virtual Int_t StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data);
     virtual Int_t CoarseProcess(TClonesArray& tracks);
     virtual Int_t FineProcess(TClonesArray& tracks);
@@ -39,7 +39,7 @@ public:
     Int_t GetNhits() const { return static_cast<Int_t>(fEventData.size()); }
 
 protected:
-    OptUInt_t LoadData( const THaEvData& evdata,
+    virtual OptUInt_t LoadData( const THaEvData& evdata,
                         const DigitizerHitInfo_t& hitinfo ) override;
     virtual Int_t ReadDatabase(const TDatime& date); // Read config parameters from the database
     virtual Int_t DefineVariables(EMode mode); // Define global analysis vars

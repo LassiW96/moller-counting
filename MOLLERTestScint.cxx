@@ -49,14 +49,15 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 
     const char* const here = "ReadDatabase";
 
-    //VarType kDataType  = std::is_same<Data_t, Float_t>::value ? kFloat  : kDouble;
-    //VarType kDataTypeV = std::is_same<Data_t, Float_t>::value ? kFloatV : kDoubleV;
+    Int_t err = THaNonTrackingDetector::ReadDatabase(date);
+    if (err)
+      return err;
 
     FILE* file = OpenFile(date);
     if (!file) return kFileError;
 
     // Read fOrigin and fsize (required!)
-    Int_t err = ReadGeometry(file, date, true);
+    err = ReadGeometry(file, date, true);
     if (err) {
         fclose(file);
         return err;
@@ -81,6 +82,13 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 
     err = LoadDB(file, date, config_request, fPrefix);
 
+    UInt_t flags = THaDetMap::kFillLogicalChannel | THaDetMap::kFillModel;
+    std::cout<<"Flags ="<<flags<<std::endl;
+    if( !err && FillDetMap(detmap, flags, here) <= 0 ) {
+      cout<<"here"<<endl;
+      err = kInitError;  // Error already printed by FillDetMap
+    }
+
     auto ret = HallA::MakeFADCData(date, this);
     if (ret.second)
         return ret.second; // Database error
@@ -104,18 +112,20 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 Int_t MOLLERTestScint::DefineVariables(EMode mode)
 {
-    std::cout << "[DEBUG] Def var = " << std::endl;
+    std::cout << "[DEBUG] in def var = " << std::endl;
 
     // Define more variables as required
     // Only including following for now
-    RVarDef vars[] = {
+    /*RVarDef vars[] = {
         {"nhits",       "Number of hits",       "GetNhits()"},
         {"chan",        "Channel number",       "fEventData.fChannel"},
         {"adc",         "Raw ADC value",        "fEventData.fRawADC"},
         {"adc_c",       "Calibrated ADC value", "fEventData.fCalADC"},
         {nullptr}
     };
-    return DefineVarsFromList(vars, mode);
+    return DefineVarsFromList(vars, mode);*/
+
+    return fPMT->DefineVariables(mode);
 }
 
 // Clear per-event data - this is called before Decode() function
@@ -126,45 +136,98 @@ void MOLLERTestScint::Clear(Option_t* opt)
     fEventData.clear();
 }
 
-// Adding a decode method according to THaScintillator
+// Adding a decode method following THaDetectorBase
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
+/*Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
 {
 
-    std::cout << "[DEBUG] in Decode = " << std::endl;
   // Decode scintillator data, correct TDC times and ADC amplitudes, and copy
   // the data to the local data members.
-  // Additionally, apply timewalk corrections and find "paddle hits" (= hits
-  // with TDC signals on both sides).
 
-  THaNonTrackingDetector::Decode(evdata);
-  // Figure out how to put LoadData and StoreHit here.
+  const char* const here = "Decode";
 
-  return kOK;
-}
+  bool has_warning = false;
+  Int_t nhits = 0;
+
+  // Iterator over all channels assigned to this detector
+  auto hitIter = fDetMap->MakeIterator(evdata);
+  while (hitIter) {
+    const auto& hitinfo = *hitIter;
+
+    // Example: Warn about multiple hits unless you expect them
+    if (hitinfo.nhit > 1 &&
+        hitinfo.modtype != Decoder::ChannelType::kMultiFunctionADC &&
+        hitinfo.modtype != Decoder::ChannelType::kMultiFunctionTDC) {
+      MultipleHitWarning(hitinfo, here);
+      has_warning = true;
+    }
+
+    // Get amplitude (or raw ADC value)
+    auto data = LoadData(evdata, hitinfo);
+    if (!data) {
+      DataLoadWarning(hitinfo, here);
+      has_warning = true;
+      ++hitIter;
+      continue;
+    }
+
+    // Store raw ADC counts
+    fFadc.push_back(data.value());
+
+    // Optional: If using FADC250, you can also grab pulse time & integral
+    if (hitinfo.modtype == Decoder::ChannelType::kFADC250) {
+      Double_t time = evdata.GetPulseTime(hitinfo.crate, hitinfo.slot, hitinfo.chan, hitinfo.hit);
+      Double_t integral = evdata.GetPulseIntegral(hitinfo.crate, hitinfo.slot, hitinfo.chan, hitinfo.hit);
+
+      fTime.push_back(time);
+      fIntegral.push_back(integral);
+    }
+
+    // Call StoreHit if you want fDetectorData to get updated too
+    StoreHit(hitinfo, data.value());
+
+    // Clear hit-done flag for next iteration
+    for (auto& detData : fDetectorData)
+      detData->ClearHitDone();
+
+    ++hitIter;
+    ++nhits;
+  }
+
+  if (has_warning)
+    ++fNEventsWithWarnings;
+
+#ifdef WITH_DEBUG
+  if (fDebug > 3)
+    PrintDecodedData(evdata);
+#endif
+
+  return nhits;
+}*/
 
 // Adding LoadData function according to FADCScintillator
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
     const DigitizerHitInfo_t& hitinfo )
 {
-    std::cout << "[DEBUG] in Load data= " << std::endl;
+    //std::cout << "[DEBUG] in Load data= " << std::endl;
 
 // Callback from Decoder for loading the data for the 'hitinfo' channel.
 // This routine supports FADC modules and returns the pulse amplitude integral.
 // Additional info is retrieved from the FADC modules in StoreHit later.
 
 // figure this out
-std::cout << "[DEBUG] ChannelType = " << static_cast<int>(hitinfo.type) << std::endl;
-if (hitinfo.type == Decoder::ChannelType::kMultiFunctionADC) {
-    std::cout << "[DEBUG] Identified kMultiFunctionADC\n";
+//std::cout << "[DEBUG] ChannelType = " << static_cast<int>(hitinfo.modtype) << std::endl;
+/*if (hitinfo.modtype == Decoder::ChannelType::kMultiFunctionADC) {
+    //std::cout << "[DEBUG] Identified kMultiFunctionADC\n";
     return HallA::FADCData::LoadFADCData(hitinfo);
 }
 
 // Fallback to legacy modules
-return THaNonTrackingDetector::LoadData(evdata, hitinfo);
+return THaNonTrackingDetector::LoadData(evdata, hitinfo);*/
 //if (ret) return ret;
 
+return HallA::FADCData::LoadFADCData(hitinfo);
 //return 0;
 }
 
