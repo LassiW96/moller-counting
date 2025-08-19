@@ -18,6 +18,8 @@
 #include <stdexcept>
 */
 
+#include <chrono>
+
 using namespace std;
 using namespace Podd;
 
@@ -28,7 +30,8 @@ static const int MAXCHAN = 100;
 //////////////////////////////////////////////////////////////////////////////////////
 MOLLERTestScint::MOLLERTestScint(const char* name, const char* description,
                                 THaApparatus* apparatus) :
-                                THaNonTrackingDetector(name, description, apparatus), fPMT(nullptr)
+                                THaNonTrackingDetector(name, description, apparatus), 
+                                fPMT(nullptr)
 {
     // Constructor
 }
@@ -73,7 +76,7 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 
     DBRequest config_request[] = {
         { "detmap",             &detmap,            kIntV },
-        { "model_in_detmap",    &model_in_detmap,   kInt,   0,  true},
+        { "model_in_detmap",    &model_in_detmap,   kInt,   0,  true}, // Module number if mentioned in the db file.
         { "chanmap",            &chanmap,           kIntV },
         { "ncols",              &ncols,             kInt },
         { "nrows",              &nrows,             kInt },
@@ -88,6 +91,13 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
       cout<<"here"<<endl;
       err = kInitError;  // Error already printed by FillDetMap
     }
+
+    // Print detmap contents
+    std::cout << "Detmap: ";
+    for (size_t i = 0; i < detmap.size(); ++i) {
+        std::cout << detmap[i] << " ";
+    }
+    std::cout << std::endl;
 
     auto ret = HallA::MakeFADCData(date, this);
     if (ret.second)
@@ -138,7 +148,7 @@ void MOLLERTestScint::Clear(Option_t* opt)
 
 // Adding a decode method following THaDetectorBase
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
+Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
 {
 
   // Decode scintillator data, correct TDC times and ADC amplitudes, and copy
@@ -148,7 +158,7 @@ void MOLLERTestScint::Clear(Option_t* opt)
 
   bool has_warning = false;
   Int_t nhits = 0;
-
+  
   // Iterator over all channels assigned to this detector
   auto hitIter = fDetMap->MakeIterator(evdata);
   while (hitIter) {
@@ -171,19 +181,54 @@ void MOLLERTestScint::Clear(Option_t* opt)
       continue;
     }
 
-    // Store raw ADC counts
-    fFadc.push_back(data.value());
+    auto *fFadc = dynamic_cast <Fadc250Module*> (evdata.GetModule(hitinfo.crate, hitinfo.slot));
 
-    // Optional: If using FADC250, you can also grab pulse time & integral
-    if (hitinfo.modtype == Decoder::ChannelType::kFADC250) {
-      Double_t time = evdata.GetPulseTime(hitinfo.crate, hitinfo.slot, hitinfo.chan, hitinfo.hit);
-      Double_t integral = evdata.GetPulseIntegral(hitinfo.crate, hitinfo.slot, hitinfo.chan, hitinfo.hit);
+    // Need to figure out how to get these values from hitinfo or DB. Hard coding for now
+    static const size_t NADCCHAN = fDetMap->GetTotNumChan();
+    static const size_t NUMSLOTS = 22;        // Number of slots
+    static const size_t NPEAK = 4;            // ??
 
-      fTime.push_back(time);
-      fIntegral.push_back(integral);
+    vector<uint32_t> raw_samples_vector[NUMSLOTS][NADCCHAN], raw_samples_npeak_vector[NUMSLOTS][NADCCHAN][NPEAK];
+
+    if (!fFadc) {
+        cout << "ERROR: Module at crate " << hitinfo.crate
+            << ", slot " << hitinfo.slot << " is not an Fadc250Module" << endl;
+        continue;
     }
 
-    // Call StoreHit if you want fDetectorData to get updated too
+    UInt_t npulses = fFadc->GetNumFadcEvents(hitinfo.chan);
+    if (hitinfo.hit >= npulses) {
+        cout << "ERROR: Requested hit index " << hitinfo.hit
+            << " out of range (only " << npulses << " hits available) "
+            << "for slot " << hitinfo.slot << ", channel " << hitinfo.chan << endl;
+        continue;
+    }
+
+    for (size_t chan = 0; chan < NADCCHAN; chan++) {
+
+        // Number of FADC events
+        UInt_t fadcNevents = fFadc->GetNumFadcEvents(chan);
+        // Number of FADC samples
+        UInt_t fadcNsamples = fFadc->GetNumFadcSamples(chan, hitinfo.hit);
+        //Double_t time = fFadc->GetPulseTimeData(chan, hitinfo.hit);
+
+        for (UInt_t jevent = 0; jevent < fadcNevents; jevent++) {
+            Double_t integral = fFadc->GetEmulatedPulseIntegralData(chan);
+            fIntegral.push_back(integral);
+
+            // Acquire raw sample vector
+            if (fadcNsamples > 0) {
+                raw_samples_vector[hitinfo.slot][chan] = fFadc->GetPulseSamplesVector(chan);
+                for (uint32_t ipeak = 0; ipeak < NPEAK; ipeak++) {
+                    if (uint32_t (fadcNevents) == ipeak+1) {
+                        raw_samples_npeak_vector[hitinfo.slot][chan][ipeak] = fFadc->GetPulseSamplesVector(chan);
+                    }
+                }
+                // Raw sample n peak index needs to be filled
+            }
+        }
+    }
+    
     StoreHit(hitinfo, data.value());
 
     // Clear hit-done flag for next iteration
@@ -203,11 +248,11 @@ void MOLLERTestScint::Clear(Option_t* opt)
 #endif
 
   return nhits;
-}*/
+}
 
 // Adding LoadData function according to FADCScintillator
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
+/*OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
     const DigitizerHitInfo_t& hitinfo )
 {
     //std::cout << "[DEBUG] in Load data= " << std::endl;
@@ -216,27 +261,40 @@ OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
 // This routine supports FADC modules and returns the pulse amplitude integral.
 // Additional info is retrieved from the FADC modules in StoreHit later.
 
-// figure this out
-//std::cout << "[DEBUG] ChannelType = " << static_cast<int>(hitinfo.modtype) << std::endl;
-/*if (hitinfo.modtype == Decoder::ChannelType::kMultiFunctionADC) {
-    //std::cout << "[DEBUG] Identified kMultiFunctionADC\n";
-    return HallA::FADCData::LoadFADCData(hitinfo);
+// Following new script in hana_decode/apps/tstfadc script
+for (size_t mod = 0; mod + 4 < fDetMap->GetSize(); mod++) {
+    THaDetMap::Module *d = fDetMap->GetModule(mod);
+    fFadc = dynamic_cast<Fadc250Module*>(
+            evdata.GetModule(d->crate, d->slot)
+    );
+}
+
+if (hitinfo.modtype == Decoder::ChannelType::kMultiFunctionADC) {
+    //std::cout << " [DEBUG] before chrono start " << std::endl;
+    auto start = std::chrono::steady_clock::now();
+    auto result = fPMT->LoadFADCData(hitinfo);
+    auto elapsed = std::chrono::steady_clock::now() - start;
+    if (elapsed > std::chrono::milliseconds(100)) {
+      std::cerr << "[ERROR] LoadFADCData hung for "
+                << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
+                << " ms, skipping" << std::endl;
+      return {}; // empty
+    }
+    return result;
 }
 
 // Fallback to legacy modules
-return THaNonTrackingDetector::LoadData(evdata, hitinfo);*/
+return THaNonTrackingDetector::LoadData(evdata, hitinfo);
 //if (ret) return ret;
-
-return HallA::FADCData::LoadFADCData(hitinfo);
 //return 0;
-}
+}*/
 
 // Store decoded data
 // See SDK/UserDetector.cxx for more info
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
+/*Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
 {
-    std::cout << "[DEBUG] in StoreHit = " << std::endl;
+    //std::cout << "[DEBUG] in StoreHit = " << std::endl;
   // Put decoded frontend data into fDetectorData. Called from Decode().
   // Data decoding is also done here - from FADCData
   // Call StoreHit for the FADC modules first to get updated pedestals
@@ -250,7 +308,7 @@ Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
 
   // Now fill the PMTData in fDetectorData
   return THaNonTrackingDetector::StoreHit(hitinfo, data);
-}
+}*/
 
 // Coarse process & Fine process
 // Fill these functions as required

@@ -19,10 +19,12 @@ using namespace HallA;
 void replay_test_scint(int runnum=372, int firstsegment=0, int maxsegments=1, long firstevent=0, long nevents=1000) {
     // Create an apparatus and add your detector to it
     // THaApparatus* testApp = new THaApparatus("TestApp");
+    cout << "Starting the replay" << endl;
     MOLLERSpectrometer *moller = new MOLLERSpectrometer ("moller", "Generic apparatus");
     MOLLERTestScint* scint = new MOLLERTestScint("scint", "scint");
     
     moller->AddDetector(scint);
+    cout << "Apparatus and detector initialized" << endl;
 
     // Register the apparatus with the analyzer framework
     THaAnalyzer *analyzer = new THaAnalyzer;
@@ -30,6 +32,7 @@ void replay_test_scint(int runnum=372, int firstsegment=0, int maxsegments=1, lo
     gHaApps->Add(moller);
 
     THaEvent* event = new THaEvent;
+    cout << "Event setted up" << endl;
     
     TString prefix = gSystem->Getenv("DATA_DIR");
     
@@ -39,11 +42,13 @@ void replay_test_scint(int runnum=372, int firstsegment=0, int maxsegments=1, lo
     int lastsegment=firstsegment;
     
     TClonesArray *filelist = new TClonesArray("THaRun",10);
+    cout << "TCloansArray: filelist" << endl;
   
     TDatime now = TDatime();
     
     int segcounter=0;
     //This loop adds all file segments found to the list of THaRuns to process:
+    cout << "File segment loop starting" << endl;
     while( segcounter < maxsegments && segment - firstsegment < maxsegments ){
 
     TString codafilename;
@@ -92,6 +97,7 @@ void replay_test_scint(int runnum=372, int firstsegment=0, int maxsegments=1, lo
   analyzer->EnableBenchmarks();
   
   // Define the analysis parameters
+  cout << "analyzer->SetEvent" << endl;
   analyzer->SetEvent( event );
   analyzer->SetOutFile( outfilename.Data() );
   // File to record cuts accounting information
@@ -104,21 +110,26 @@ void replay_test_scint(int runnum=372, int firstsegment=0, int maxsegments=1, lo
   
   odef_filename.Prepend( prefix );
 
-  
+  cout << "analyzer->SetOdefFile" << endl;
   analyzer->SetOdefFile( odef_filename );
   
   //analyzer->SetCompressionLevel(0); // turn off compression
 
   filelist->Compress();
 
+  cout << "THaRun about to start for segments" << endl;
   for( int iseg=0; iseg<filelist->GetEntries(); iseg++ ){
     THaRun *run = ( (THaRun*) (*filelist)[iseg] );
     if( nevents > 0 ) run->SetLastEvent(nevents); //not sure if this will work as we want it to for multiple file segments chained together
 
+    cout << "run->SetFirstEvent" << endl;
     run->SetFirstEvent( firstevent );
     
+    cout << "run->SetDataRequired" << endl;
     run->SetDataRequired(0);
     
+    cout << "analyzer->Process" << endl;
     analyzer->Process(run);     // start the actual analysis
   }
+  cout << "analyzer->Process done!" << endl;
 }
