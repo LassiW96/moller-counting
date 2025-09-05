@@ -31,7 +31,7 @@ public:
     // Public base functions
     virtual void Clear(Option_t* opt="");
     virtual Int_t     Decode( const THaEvData& );
-    //virtual Int_t StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data);
+    virtual Int_t StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data);
     virtual Int_t CoarseProcess(TClonesArray& tracks);
     virtual Int_t FineProcess(TClonesArray& tracks);
     //virtual void   Print( Option_t* opt="" ) const;
@@ -47,10 +47,12 @@ protected:
     // std::vector<Decoder::Fadc250Module*> fFadcModules; // vector for more than 1 FADC modules
     Fadc250Module* fFadc;
     TString fFadcName;
-    HallA::FADCData*               fPMT;      // An array for the number of PMTs - from fadc data (how to declair an array of unknown length)
+    HallA::FADCData*               fPMT;      //  A pointer to a FADCData object (how to declair an array of unknown length)
     //---- Data stored with this detector follow here ----
     typedef std::vector<Data_t> DataVec_t;
     
+    std::vector<HallA::FADCData_t>   fFADCData;  // FADC per-event readout data
+
     // Calibration data from database
     DataVec_t fPed;       // ADC pedestals
     DataVec_t fGain;      // ADC gains

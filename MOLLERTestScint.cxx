@@ -18,8 +18,6 @@
 #include <stdexcept>
 */
 
-#include <chrono>
-
 using namespace std;
 using namespace Podd;
 
@@ -48,7 +46,7 @@ MOLLERTestScint::~MOLLERTestScint()
 ///////////////////////////////////////////////////////////////////////////////////////
 Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 {
-    std::cout << "[DEBUG] in RDB = " << std::endl;
+    //std::cout << "[DEBUG] in RDB = " << std::endl;
 
     const char* const here = "ReadDatabase";
 
@@ -158,12 +156,29 @@ Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
 
   bool has_warning = false;
   Int_t nhits = 0;
+
+  static const size_t NADCCHAN = fDetMap->GetTotNumChan();
   
   // Iterator over all channels assigned to this detector
   auto hitIter = fDetMap->MakeIterator(evdata);
   while (hitIter) {
     const auto& hitinfo = *hitIter;
 
+    /*cout << "hitinfo.chan: " << hitinfo.chan << endl;
+    cout << "hitinfo.crate: " << hitinfo.crate << endl;
+    cout << "hitinfo.ev: " << hitinfo.ev << endl;
+    cout << "hitinfo.hit: " << hitinfo.hit << endl;
+    cout << "hitinfo.modtype: " << static_cast<int>(hitinfo.modtype) << endl;
+    cout << "hitinfo.module: " << hitinfo.module << endl;
+    cout << "hitinfo.lchan: " << hitinfo.lchan << endl;
+    cout << "hitinfo.slot: " << hitinfo.slot << endl;
+    cout << "hitinfo.type: " << static_cast<int>(hitinfo.type) << endl;
+    cout << "================================================================" << endl;*/
+
+    if (hitinfo.type != ChannelType::kMultiFunctionADC) return 0;
+
+    size_t k = hitinfo.lchan;
+    
     // Example: Warn about multiple hits unless you expect them
     if (hitinfo.nhit > 1 &&
         hitinfo.modtype != Decoder::ChannelType::kMultiFunctionADC &&
@@ -172,23 +187,7 @@ Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
       has_warning = true;
     }
 
-    // Get amplitude (or raw ADC value)
-    auto data = LoadData(evdata, hitinfo);
-    if (!data) {
-      DataLoadWarning(hitinfo, here);
-      has_warning = true;
-      ++hitIter;
-      continue;
-    }
-
-    auto *fFadc = dynamic_cast <Fadc250Module*> (evdata.GetModule(hitinfo.crate, hitinfo.slot));
-
-    // Need to figure out how to get these values from hitinfo or DB. Hard coding for now
-    static const size_t NADCCHAN = fDetMap->GetTotNumChan();
-    static const size_t NUMSLOTS = 22;        // Number of slots
-    static const size_t NPEAK = 4;            // ??
-
-    vector<uint32_t> raw_samples_vector[NUMSLOTS][NADCCHAN], raw_samples_npeak_vector[NUMSLOTS][NADCCHAN][NPEAK];
+    auto *fFadc = dynamic_cast <Fadc250Module*> (hitinfo.module);
 
     if (!fFadc) {
         cout << "ERROR: Module at crate " << hitinfo.crate
@@ -206,30 +205,18 @@ Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
 
     for (size_t chan = 0; chan < NADCCHAN; chan++) {
 
-        // Number of FADC events
+        // Number of FADC events & samples
         UInt_t fadcNevents = fFadc->GetNumFadcEvents(chan);
-        // Number of FADC samples
         UInt_t fadcNsamples = fFadc->GetNumFadcSamples(chan, hitinfo.hit);
-        //Double_t time = fFadc->GetPulseTimeData(chan, hitinfo.hit);
 
         for (UInt_t jevent = 0; jevent < fadcNevents; jevent++) {
             Double_t integral = fFadc->GetEmulatedPulseIntegralData(chan);
+            cout << "Pulse integral: " << integral << endl;
             fIntegral.push_back(integral);
-
-            // Acquire raw sample vector
-            if (fadcNsamples > 0) {
-                raw_samples_vector[hitinfo.slot][chan] = fFadc->GetPulseSamplesVector(chan);
-                for (uint32_t ipeak = 0; ipeak < NPEAK; ipeak++) {
-                    if (uint32_t (fadcNevents) == ipeak+1) {
-                        raw_samples_npeak_vector[hitinfo.slot][chan][ipeak] = fFadc->GetPulseSamplesVector(chan);
-                    }
-                }
-                // Raw sample n peak index needs to be filled
-            }
         }
+
+        //fPMT->FADCData::StoreHit(hitinfo, val.value());
     }
-    
-    StoreHit(hitinfo, data.value());
 
     // Clear hit-done flag for next iteration
     for (auto& detData : fDetectorData)
@@ -290,9 +277,9 @@ return THaNonTrackingDetector::LoadData(evdata, hitinfo);
 }*/
 
 // Store decoded data
-// See SDK/UserDetector.cxx for more info
+// Following FADCData::StoreHit
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
+Int_t MOLLERTestScint::StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data)
 {
     //std::cout << "[DEBUG] in StoreHit = " << std::endl;
   // Put decoded frontend data into fDetectorData. Called from Decode().
@@ -308,7 +295,7 @@ return THaNonTrackingDetector::LoadData(evdata, hitinfo);
 
   // Now fill the PMTData in fDetectorData
   return THaNonTrackingDetector::StoreHit(hitinfo, data);
-}*/
+}
 
 // Coarse process & Fine process
 // Fill these functions as required
