@@ -1,22 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////////////
-// Trying a test scintillator class according to JLab Hall A SDK
-// Following UserDetector
+// Trying a test scintillator class according to JLab Hall A SDK/UserDetector
+//
+// Also, following the tstfadc_main script in podd/hana_decode/apps to writea new
+// decode function
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
 #include "MOLLERTestScint.h"
 #include "FADCData.h"
-/*#include "VarDef.h"
-#include "THaDetMap.h"
-#include "TMath.h"
-#include "Helper.h"
-#include "THaTrack.h"
-#include "TClonesArray.h"
-#include "Fadc250Module.h"
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-*/
 
 using namespace std;
 using namespace Podd;
