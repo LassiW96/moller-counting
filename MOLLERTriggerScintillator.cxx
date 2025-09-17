@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MOLLERTriggerScintillator
 // 
-// Class for a Trigger Scintillator with one PMT 
-// in MOLLER
+// Class for a Trigger Scintillator with one PMT for MOLLER
+// in this version, I'm trying to decode PMT data using FADCData objects, following FADCScintillator
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -161,7 +161,8 @@ Int_t MOLLERTriggerScintillator::ReadDatabase(const TDatime& date)
     }
 
     // Set up storage for detector per event data
-    // No need to loop over kRight and kLeft 
+    // No need to loop over kRight and kLeft
+    // Also, using HallA::MakeFADCData to make fadc data objects 
     fDetectorData.clear();
     auto ret = MakeFADCData(date, this);
     if (ret.second)
@@ -289,23 +290,23 @@ void MOLLERTriggerScintillator::Clear(Option_t* opt)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Load data 
-//OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
-//    const DigitizerHitInfo_t& hitinfo )
-//{
+/*OptUInt_t MOLLERTriggerScintillator::LoadData( const THaEvData& evdata,
+    const DigitizerHitInfo_t& hitinfo )
+{
 // Callback from Decoder for loading the data for the 'hitinfo' channel.
 // This routine supports FADC modules and returns the pulse amplitude integral.
 // Additional info is retrieved from the FADC modules in StoreHit later.
 
 // figure this out
-/*if( !CheckHitInfo(hitinfo) ) 
-    return nullopt;*/
+if( !CheckHitInfo(hitinfo) ) 
+    return nullopt;
     
-//cout << "In LoadData function" << endl;
-//return FADCData::LoadFADCData(hitinfo);
+cout << "In LoadData function" << endl;
+return FADCData::LoadFADCData(hitinfo);
 
-//cout << "In LoadData function" << endl;
+cout << "In LoadData function" << endl;
 
-//}
+}*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Store Hit
