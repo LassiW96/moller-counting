@@ -31,7 +31,6 @@ public:
     // Public base functions
     virtual void Clear(Option_t* opt="");
     virtual Int_t     Decode( const THaEvData& );
-    virtual Int_t StoreHit(const DigitizerHitInfo_t& hitinfo, UInt_t data);
     virtual Int_t CoarseProcess(TClonesArray& tracks);
     virtual Int_t FineProcess(TClonesArray& tracks);
     //virtual void   Print( Option_t* opt="" ) const;
@@ -75,13 +74,6 @@ protected:
 
     // Vector with the hit information for the current event
     std::vector<EventData> fEventData;
-
-private:
-    // Stores only physics channels: indexed by logical detchan -> {crate, slot, chan}
-    //std::vector<THaDetMap::ChanDef> fChanMap;
-
-    // Stores only reference channels
-    //std::vector<THaDetMap::ChanDef> fRefChanMap;
 
     ClassDef(MOLLERTestScint, 0)
 
