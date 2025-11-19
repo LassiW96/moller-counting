@@ -7,7 +7,6 @@
 #include "TDatime.h"
 #include "TString.h"
 
-#include "MOLLERTriggerScintillator.h"
 #include "MOLLERSpectrometer.h"
 #include "MOLLERTestScint.h"
 #include "THaApparatus.h"

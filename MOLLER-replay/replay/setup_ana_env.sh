@@ -4,10 +4,10 @@
 ## Use: source setup_ana_env.sh
 
 ## New environment for moller counting
-export MOLLER_REPLAY=$HOME/JLab-analyzers/moller-counting/MOLLER-replay
+export MOLLER_REPLAY=$HOME/MyFiles/Analyzer/moller-counting/MOLLER-replay
 
 export DB_DIR=$MOLLER_REPLAY/DB
-export DATA_DIR=$HOME/JLab-analyzers/moller-counting-test/data
+export DATA_DIR=$HOME/MyFiles/Analyzer/moller-counting-test/data
 export ANALYZER_CONFIGPATH=$MOLLER_REPLAY/replay
-export OUT_DIR=$HOME/JLab-analyzers/moller-counting-test/output
-export LOG_DIR=$HOME/JLab-analyzers/moller-counting-test/logs
+export OUT_DIR=$HOME/MyFiles/Analyzer/moller-counting-test/output
+export LOG_DIR=$HOME/MyFiles/Analyzer/moller-counting-test/logs

@@ -4,9 +4,9 @@
 set -e
 
 # Paths
-BUILD_DIR="/home/lasitha/JLab-analyzers/moller-counting/build"
-INSTALL_DIR="/home/lasitha/JLab-analyzers/moller-counting-install"
-SRC_DIR="/home/lasitha/JLab-analyzers/moller-counting"
+BUILD_DIR="~$HOME/MyFiles/Analyzer/moller-counting/build"
+INSTALL_DIR="~$HOME/MyFiles/Analyzer/moller-counting-install"
+SRC_DIR="~$HOME/MyFiles/Analyzer/moller-counting"
 
 echo "Removing previous .rootrc file"
 rm -rf "${SRC_DIR}/MOLLER-replay/replay/.rootrc"

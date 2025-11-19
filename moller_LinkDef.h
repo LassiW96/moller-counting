@@ -16,7 +16,7 @@
 #pragma link C++ class MOLLERSpectrometer+;
 #pragma link C++ class MOLLERGEMSpectrometerTracker+;
 #pragma link C++ class MOLLERGenericDetector+;
-#pragma link C++ class HallA::MOLLERTriggerScintillator+;
+//#pragma link C++ class HallA::MOLLERTriggerScintillator+;
 #pragma link C++ class MOLLERTestScint+;
 #pragma link C++ class MOLLERElement+;
 #pragma link C++ class MOLLERData+;

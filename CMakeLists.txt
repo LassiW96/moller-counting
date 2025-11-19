@@ -57,7 +57,7 @@ set(sources
   MOLLERGEMSpectrometerTracker.cxx
   MPDModule.cxx
   MOLLERGenericDetector.cxx MOLLERElement.cxx MOLLERData.cxx MOLLERManager.cxx
-  MOLLERTriggerScintillator.cxx
+  #MOLLERTriggerScintillator.cxx
   MOLLERTestScint.cxx
   #Fadc250Module.cxx
   )

@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../analyzer-dev/source"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"replay_fadc.C": "cpp"
+		}
+	}
+}

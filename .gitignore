@@ -1,5 +1,7 @@
-build
+build/
 install
 Errors_and_warnings.txt
 logs.txt
 Notes.txt
+.vscode
+MOLLER-replay/

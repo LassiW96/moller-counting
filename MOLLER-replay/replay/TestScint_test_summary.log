@@ -1,8 +1,8 @@
-==== 2025-08-20 12:05:37 -0500
+==== 2025-11-19 12:37:14 -0600
 Started analysis, run 372
-Reading from "file:///home/lasitha/JLab-analyzers/moller-counting-test/data/test_vtp_372.evio.0"
+Reading from "file:///home/lasitha/MyFiles/Analyzer/moller-counting-test/data/test_vtp_372.evio.0"
 Event limit reached.
-==== 2025-08-20 12:05:41 -0500
+==== 2025-11-19 12:48:53 -0600
 Summary for run 372
 Counter summary:
 1002  events read
@@ -13,16 +13,16 @@ Counter summary:
 1002  events accepted
 
 Timing summary:
-Init             : Real Time =   0.98 seconds Cpu Time =   0.88 seconds
+Init             : Real Time = 449.51 seconds Cpu Time =   1.47 seconds
 Begin            : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
-RawDecode        : Real Time =   0.19 seconds Cpu Time =   0.17 seconds
-Decode           : Real Time =   3.44 seconds Cpu Time =   2.12 seconds
-CoarseTracking   : Real Time =   0.01 seconds Cpu Time =   0.00 seconds
-CoarseReconstruct: Real Time =   0.00 seconds Cpu Time =   0.01 seconds
+RawDecode        : Real Time =   0.21 seconds Cpu Time =   0.18 seconds
+Decode           : Real Time =   0.05 seconds Cpu Time =   0.03 seconds
+CoarseTracking   : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+CoarseReconstruct: Real Time =   0.00 seconds Cpu Time =   0.00 seconds
 Tracking         : Real Time =   0.00 seconds Cpu Time =   0.01 seconds
 Reconstruct      : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
-Physics          : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
+Physics          : Real Time =   0.00 seconds Cpu Time =   0.01 seconds
 End              : Real Time =   0.00 seconds Cpu Time =   0.00 seconds
-Output           : Real Time =   0.15 seconds Cpu Time =   0.13 seconds
-Cuts             : Real Time =   0.02 seconds Cpu Time =   0.02 seconds
-Total            : Real Time =   4.85 seconds Cpu Time =   3.39 seconds
+Output           : Real Time =   6.88 seconds Cpu Time =   0.13 seconds
+Cuts             : Real Time =  12.18 seconds Cpu Time =   0.01 seconds
+Total            : Real Time = 691.80 seconds Cpu Time =   1.91 seconds

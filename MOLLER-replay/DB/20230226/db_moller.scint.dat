@@ -41,6 +41,7 @@ moller.scint.adc.thres = 10.0
 ## bin = 4ns
 moller.scint.adc.NPedBin = 5
 moller.scint.NPED = 5
+moller.scint.adc.NPED = 5
 
 ## Number of bins before threshold bin to use in integrating pulse
 ## bin 4ns
@@ -54,6 +55,7 @@ moller.scint.NSA = 22
 
 ## Total fadc window size
 moller.scint.Win = 27
+moller.scint.adc.Win = 27
 
 ## Number of bins for fixed threshold if no threshold crossing is found    # Look what this is
 moller.scint.adc.FixThresBin = 14
@@ -63,9 +65,11 @@ moller.scint.adc.gain = 1.0
 
 ## Threshold flag
 moller.scint.TFlag = 2
+moller.scint.adc.TFlag = 2
 
 ## TDC scalling factor, not using this, without this it puts out an error
 moller.scint.TDCScale = 1
+moller.scint.adc.TDCScale = 1
 
 #Number of paddles
 moller.scint.nelem = 32
