@@ -10,7 +10,7 @@
 #include "FADCData.h"
 
 using namespace std;
-using namespace Podd;
+using namespace HallA;
 
 // Hard coded maximum number of channels
 static const int MAXCHAN = 100;
@@ -63,47 +63,80 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
     vector<Int_t> detmap;
     vector<Int_t> chanmap;
     Int_t model_in_detmap = 0;
-    Int_t ncols = 0;
-    Int_t nrows = 0;
+    vector<Int_t> ncols;
+    Int_t nrows = 1, nlayers = 1;
     Int_t nelem = 0;
 
     DBRequest config_request[] = {
         { "detmap",             &detmap,            kIntV },
         { "model_in_detmap",    &model_in_detmap,   kInt,   0,  true}, // Module number if mentioned in the db file.
         { "chanmap",            &chanmap,           kIntV },
-        { "ncols",              &nelem,             kInt },
+        { "ncols",        &ncols,   kIntV, 0, false },
+        { "nlayers",           &nlayers,          kInt,   1,  true },
         { "nrows",              &nrows,             kInt },
         { nullptr }
     };
 
     err = LoadDB(file, date, config_request, fPrefix);
 
-    UInt_t flags = THaDetMap::kFillLogicalChannel | THaDetMap::kFillModel;
-    std::cout<<"Flags ="<<flags<<std::endl;
+    // Adding the folllwing part according to the GenericDetector -
+    // this is how they handle number of detector elements, and
+    // skipped / ref channels
+
+    Int_t ntemp = ncols.size();
+    for(Int_t r = ntemp, i = 0; r < nrows; r++,i++) {
+    if(ncols[i%ntemp]<=0) {
+        Error( Here(here), "ncols cannot have negative entries!");
+        fclose(file);
+        return kInitError;
+    }
+    ncols.push_back(ncols[i%ntemp]);
+    }
+
+    for (int r = 0; r < nrows; r++) {
+        nelem += ncols[r]*nlayers;
+    }
+    assert(int(ncols.size()) == nrows);
+
+    fNelem = nelem;
+    int nskipped = 0;
+    int nrefchans = 0;
+    if (!chanmap.empty()) {
+        for (auto i : chanmap) {
+            if (i == -1) nskipped++;
+            if (i == -1000) nrefchans++;
+        }
+    }
+
+    UInt_t flags = THaDetMap::kFillRefIndex; // Specify reference index/channel
     if( !err && FillDetMap(detmap, flags, here) <= 0 ) {
       cout<<"here"<<endl;
       err = kInitError;  // Error already printed by FillDetMap
+    } else {
+        nelem = fDetMap->GetTotNumChan() - nskipped - nrefchans; // Exclude skipped channels in count
+
+        if ( nelem != fNelem) {
+            Error( Here(here), "Number of crate module channels (%d) "
+                "inconsistent with number of blocks (%d)", nelem, fNelem);
+            err = kInitError;
+        }
     }
 
-    // Print detmap contents
-    std::cout << "Detmap: ";
-    for (size_t i = 0; i < detmap.size(); ++i) {
-        std::cout << detmap[i] << " ";
-    }
-    std::cout << std::endl;
-
+    // Now initialize the FADCData object for this detector using new
+    // FADCData class
     auto ret = HallA::MakeFADCData(date, this);
     if (ret.second)
         return ret.second; // Database error
 
-    fPMT = ret.first.get();
+    // Debug printout of detmap
+    fDetMap->Print();
 
+    fPMT = ret.first.get();
     fDetectorData.emplace_back(move(ret.first));
 
     // Calibration parameters need to be added
 
     fclose(file);
-
     fIsInit = true;
     return kOK;
 }
@@ -112,19 +145,8 @@ Int_t MOLLERTestScint::ReadDatabase(const TDatime& date)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 Int_t MOLLERTestScint::DefineVariables(EMode mode)
 {
+    // Variables are defined in the FADCData class internally
     std::cout << "[DEBUG] in def var = " << std::endl;
-
-    // Define more variables as required
-    // Only including following for now
-    /*RVarDef vars[] = {
-        {"nhits",       "Number of hits",       "GetNhits()"},
-        {"chan",        "Channel number",       "fEventData.fChannel"},
-        {"adc",         "Raw ADC value",        "fEventData.fRawADC"},
-        {"adc_c",       "Calibrated ADC value", "fEventData.fCalADC"},
-        {nullptr}
-    };
-    return DefineVarsFromList(vars, mode);*/
-
     return fPMT->DefineVariables(mode);
 }
 
@@ -135,87 +157,63 @@ void MOLLERTestScint::Clear(Option_t* opt)
     THaNonTrackingDetector::Clear(opt);
 }
 
-// Adding a decode method following THaDetectorBase
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// How do we use the Decode function accordingly?
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Int_t MOLLERTestScint::Decode( const THaEvData& evdata )
 {
-    // Decode raw data (evdata), and copy data to the local data members.
+    // Decode scintillator data, correct TDC times and ADC amplitudes, and copy
+    // the data to the local data members.
+    // Additionally, apply timewalk corrections and find "paddle hits" (= hits
+    // with TDC signals on both sides).
 
+    THaNonTrackingDetector::Decode(evdata);
 
-    const char* const here = "Decode";
+    // From THaScintillator.cxx
+    // ApplyCorrections();
+    // FindPaddleHits();
 
-    // // Loop over all modules defined for this detector
-    // bool has_warning = false;
-    // Int_t nhits = 0;
-
-    // auto hitIter = fDetMap->MakeIterator(evdata);
-
-    // while( hitIter ) {
-    // const auto& hitinfo = *hitIter;
-    // // should always assume that logical channel numbers start counting from zero.
-
-    // //Check if there are ny hits on the channel
-    // if( hitinfo.nhit > 0 ) {
-    //     if (DEBUG) std::cout << "\nTestScint::Decode: number of hits (hitinfo.nhit) ="
-    //             << hitinfo.nhit <<std::endl;
-
-    //     // Multiple hits in a channel (usually noise)
-    //     // For multifunction modules, assume "hit" is a data word index, so
-    //     // don't log anything but assume the user simply wants the first word.
-    //     if( hitinfo.modtype != Decoder::ChannelType::kMultiFunctionADC) {
-    //     MultipleHitWarning(hitinfo, here);
-    //     has_warning = true;
-    //     }
-    // }
-
-    // //Get the data for this hit
-    // auto* fadc = dynamic_cast<Fadc250Module*>(hitinfo.module);
-    
-    // if(fadc==nullptr){
-    //     cout<<" No module found! exit "<<endl;
-    //     return 0;
-    // }
-    // std::cout<<"TestScint::Decode: event number= "<<hitinfo.ev<<std::endl;
-
-    // auto data = HallA::FADCData::LoadFADCData(hitinfo);
-    
-    // if( !data ) {
-    //     std::cout << "TestScint::Decode = no data" << std::endl;
-        
-    //     // Data could not be retrieved (probably decoder bug)
-    //     DataLoadWarning(hitinfo, here);
-    //     has_warning = true;
-    //     continue;
-    // }
-    
-    // // Store hit data (and derived quantities) in fDetectorData.
-    // fPMT->HallA::FADCData::StoreHit(hitinfo, data.value());
-    
-    
-    // // Clear the hit-done flag which can be used in custom StoreHit methods
-    // // to reorder module processing
-    // for( auto& detData : fDetectorData )
-    //     detData->ClearHitDone();
-    
-    // // Next active channel
-    // ++hitIter;
-    // ++nhits;
-    // }
-
-    // if( has_warning )
-    // ++fNEventsWithWarnings;
-
-    // #ifdef WITH_DEBUG
-    // if ( fDebug > 3 )
-    // PrintDecodedData(evdata);
-    // #endif
-
-    // return nhits;
-
-    // This calls the LoadData function
-    return THaNonTrackingDetector::Decode(evdata);
-
+    // What's a good return value here?
+    return 0;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Load data 
+OptUInt_t MOLLERTestScint::LoadData( const THaEvData& evdata,
+    const DigitizerHitInfo_t& hitinfo )
+{
+    // Callback from Decoder for loading the data for the 'hitinfo' channel.
+    // This routine supports FADC modules and returns the pulse amplitude integral.
+    // Additional info is retrieved from the FADC modules in StoreHit later.
+
+    //std::cout << "[DEBUG] in LoadData" << std::endl;
+    std::cout << "Module type = " << static_cast<int>(hitinfo.modtype) << std::endl;
+
+    if( hitinfo.modtype == Decoder::ChannelType::kMultiFunctionADC )
+        return HallA::FADCData::LoadFADCData(hitinfo);
+
+    // Fallback for legacy modules
+    return THaNonTrackingDetector::LoadData(evdata, hitinfo);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Store Hit
+Int_t MOLLERTestScint::StoreHit( const DigitizerHitInfo_t& hitinfo, UInt_t data )
+{
+  // Put decoded frontend data into fDetectorData. Called from Decode().
+  // Data decoding is also done here - from FADCData
+  // Call StoreHit for the FADC modules first to get updated pedestals
+  HallA::FADCData* fadcData = fPMT;
+  fadcData->StoreHit(hitinfo, data);
+
+  //cout << "In StoreHit function" << endl;
+
+  // Retrieve pedestal, if available, and update the PMTData calibrations
+  // Just added the function
+
+  // Now fill the PMTData in fDetectorData
+  return THaNonTrackingDetector::StoreHit(hitinfo, data);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Coarse process & Fine process
 // Fill these functions as required

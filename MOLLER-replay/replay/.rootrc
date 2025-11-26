@@ -2,7 +2,7 @@
 Rint.Logon        /home/lasitha/MyFiles/Analyzer/moller-counting-install/etc/rootlogon.C
 
 Unix.*.Root.DynamicPath:   .:lib:$(ROOTSYS)/lib
-Unix.*.Root.MacroPath:     .:$(ROOTSYS)/macros
+Unix.*.Root.MacroPath:     .:/home/lasitha/MyFiles/Analyzer/moller-counting/MOLLER-replay/replay:/home/lasitha/MyFiles/Analyzer/moller-counting/MOLLER-replay/scripts:/home/lasitha/MyFiles/Analyzer/moller-counting/MOLLER-replay/onlineGUIconfig: /home/lasitha/MyFiles/Analyzer/moller-counting/MOLLER-replay/onlineGUIconfig/scripts:$(ROOTSYS)/macros
 
 ACLiC.IncludePaths:       -Iinclude
 
